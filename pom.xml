@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.5</version>
+        <relativePath/>
+        <!--  lookup parent from repository  -->
+    </parent>
+
+
+    <groupId>com.fa993</groupId>
+    <artifactId>manga_server</artifactId>
+    <version>0.0</version>
+
+    <properties>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
+        <querydsl.version>4.2.1</querydsl.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.13.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>dev.morphia.morphia</groupId>-->
+<!--            <artifactId>morphia-core</artifactId>-->
+<!--            <version>2.1.6</version>-->
+<!--        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.25</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>5.4.32.Final</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.107</version>
+        </dependency>
+
+
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.mongodb</groupId>-->
+        <!--            <artifactId>mongo-java-driver</artifactId>-->
+        <!--            <version>3.12.8</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.querydsl</groupId>-->
+        <!--            <artifactId>querydsl-mongodb</artifactId>-->
+        <!--            <version>${querydsl.version}</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.querydsl</groupId>-->
+        <!--            <artifactId>querydsl-apt</artifactId>-->
+        <!--            <version>${querydsl.version}</version>-->
+        <!--        </dependency>-->
+
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.querydsl/querydsl-maven-plugin &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.querydsl</groupId>-->
+        <!--            <artifactId>querydsl-maven-plugin</artifactId>-->
+        <!--            <version>${querydsl.version}</version>-->
+        <!--        </dependency>-->
+
+        <!--        &lt;!&ndash;        &lt;!&ndash; https://mvnrepository.com/artifact/org.mongodb.morphia/morphia &ndash;&gt;&ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.mongodb.morphia</groupId>-->
+        <!--            <artifactId>morphia</artifactId>-->
+        <!--            <version>1.3.2</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>dev.morphia.morphia</groupId>-->
+        <!--            <artifactId>morphia-core</artifactId>-->
+        <!--            <version>2.1.6</version>-->
+        <!--        </dependency>-->
+
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/dev.morphia.morphia/core &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>dev.morphia.morphia</groupId>-->
+        <!--            <artifactId>core</artifactId>-->
+        <!--            <version>1.6.1</version>-->
+        <!--        </dependency>-->
+
+
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.squareup.okhttp3</groupId>-->
+        <!--            <artifactId>okhttp</artifactId>-->
+        <!--            <version>4.9.1</version>-->
+        <!--        </dependency>-->
+
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.querydsl/querydsl-maven-plugin &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.querydsl</groupId>-->
+        <!--            <artifactId>querydsl-maven-plugin</artifactId>-->
+        <!--            <version>${querydsl.version}</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.querydsl</groupId>-->
+        <!--            <artifactId>querydsl-maven-plugin</artifactId>-->
+        <!--            <version>${querydsl.version}</version>-->
+        <!--        </dependency>-->
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
+            </plugin>
+
+            <!--                        <plugin>-->
+            <!--                            <groupId>com.querydsl.maven</groupId>-->
+            <!--                            <artifactId>maven-apt-plugin</artifactId>-->
+            <!--                            <version>1.1.3</version>-->
+            <!--                            <executions>-->
+            <!--                                <execution>-->
+            <!--                                    <goals>-->
+            <!--                                        <goal>process</goal>-->
+            <!--                                    </goals>-->
+            <!--                                    <configuration>-->
+            <!--                                        <outputDirectory>target/generated-com.fa993.scrapper.sources/java</outputDirectory>-->
+            <!--                                        <processor>com.querydsl.query.apt.jdo.JDOAnnotationProcessor</processor>-->
+            <!--                                    </configuration>-->
+            <!--                                </execution>-->
+            <!--                            </executions>-->
+            <!--                        </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>com.mysema.maven</groupId>-->
+            <!--                <artifactId>apt-maven-plugin</artifactId>-->
+            <!--                <version>1.1.3</version>-->
+            <!--                <dependencies>-->
+            <!--                </dependencies>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <phase>generate-com.fa993.scrapper.sources</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>process</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <outputDirectory>${project.build.directory}/generated-com.fa993.scrapper.sources/java/</outputDirectory>-->
+            <!--                            <processors>-->
+            <!--&lt;!&ndash;                                <processor>com.querydsl.apt.QuerydslAnnotationProcessor</processor>&ndash;&gt;-->
+            <!--&lt;!&ndash;                                <processor>com.querydsl.apt.hibernate.HibernateAnnotationProcessor</processor>&ndash;&gt;-->
+            <!--&lt;!&ndash;                                <processor>com.querydsl.apt.jdo.JDOAnnotationProcessor</processor>&ndash;&gt;-->
+            <!--&lt;!&ndash;                                <processor>com.querydsl.apt.roo.RooAnnotationProcessor</processor>&ndash;&gt;-->
+            <!--                                <processor>com.querydsl.apt.morphia.MorphiaAnnotationProcessor</processor>-->
+            <!--                            </processors>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
+
+<!--            <plugin>-->
+<!--                <groupId>dev.morphia.critter</groupId>-->
+<!--                <artifactId>critter-maven</artifactId>-->
+<!--                <version>4.0.0</version>-->
+<!--                <dependencies>-->
+<!--                    &lt;!&ndash; https://mvnrepository.com/artifact/dev.morphia.critter/critter-maven &ndash;&gt;-->
+<!--                    <dependency>-->
+<!--                        <groupId>dev.morphia.critter</groupId>-->
+<!--                        <artifactId>critter-maven</artifactId>-->
+<!--                        <version>4.0.0</version>-->
+<!--                    </dependency>-->
+<!--                </dependencies>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>critter</id>-->
+<!--                        <goals>-->
+<!--                            <goal>generate</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <outputType>java</outputType>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+        </plugins>
+
+    </build>
+
+
+</project>
