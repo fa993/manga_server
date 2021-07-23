@@ -1,4 +1,4 @@
-package com.fa993.scrapper;
+package com.fa993.web;
 
 import com.fa993.core.managers.*;
 import com.fa993.core.pojos.Chapter;

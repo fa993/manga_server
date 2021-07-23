@@ -50,4 +50,6 @@ public interface SourceScrapper {
     public List<String> getAllGenre();
 
     public void acceptOnProblem(Consumer<String> func);
+
+    public void watch(int x, Consumer<String> func);
 }

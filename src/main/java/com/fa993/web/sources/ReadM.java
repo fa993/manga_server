@@ -1,4 +1,4 @@
-package com.fa993.scrapper.sources;
+package com.fa993.web.sources;
 
 import com.fa993.core.managers.SourceManager;
 import com.fa993.core.pojos.Source;
@@ -112,6 +112,11 @@ public class ReadM implements SourceScrapper {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void watch(int x, Consumer<String> func) {
+
     }
 
     @Override

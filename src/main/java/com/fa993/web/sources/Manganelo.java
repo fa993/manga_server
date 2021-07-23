@@ -1,4 +1,4 @@
-package com.fa993.scrapper.sources;
+package com.fa993.web.sources;
 
 import com.fa993.core.managers.SourceManager;
 import com.fa993.core.pojos.Source;
@@ -403,6 +403,7 @@ public class Manganelo implements SourceScrapper {
         return true;
     }
 
+    @Override
     public void getLiterallyEveryLink(int x, Consumer<String> func) {
         try {
             Document doc = Jsoup.connect(SEARCH_ALL + "/" + x).get();
@@ -413,6 +414,11 @@ public class Manganelo implements SourceScrapper {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void watch(int x, Consumer<String> func) {
+
     }
 
     @Override

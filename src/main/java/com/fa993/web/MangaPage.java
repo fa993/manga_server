@@ -1,23 +1,23 @@
-package com.fa993.scrapper;
+package com.fa993.web;
 
 import com.fa993.retrieval.SourceScrapper;
 
-public class MangaLink {
+public class MangaPage {
 
-    private String url;
+    private int page;
     private SourceScrapper scrapper;
 
-    public MangaLink(String url, SourceScrapper scrapper) {
-        this.url = url;
+    public MangaPage(int page, SourceScrapper scrapper) {
+        this.page = page;
         this.scrapper = scrapper;
     }
 
-    public String getUrl() {
-        return url;
+    public int getPage() {
+        return page;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setPage(int page) {
+        this.page = page;
     }
 
     public SourceScrapper getScrapper() {
@@ -30,8 +30,8 @@ public class MangaLink {
 
     @Override
     public String toString() {
-        return "MangaLink{" +
-                "url='" + url + '\'' +
+        return "MangaPage{" +
+                "page=" + page +
                 ", scrapper=" + scrapper +
                 '}';
     }
