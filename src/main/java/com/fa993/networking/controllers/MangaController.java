@@ -11,6 +11,7 @@ import com.fa993.core.managers.MangaManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,7 +33,14 @@ public class MangaController {
     }
 
     @GetMapping("/chapter/{id}")
-    public List<PageURL> getChapter(@PathVariable(name = "id") String id) {return this.pageManager.getByChapterId(id);}
+    public List<PageURL> getChapter(@PathVariable(name = "id") String id) {
+        return this.pageManager.getByChapterId(id);
+    }
+
+    @GetMapping("/chapter/findIndex/{manga_id}/{sequence_number}")
+    public BigInteger getChapterIndex(@PathVariable(name = "manga_id") String mangaId, @PathVariable(name = "sequence_number") Integer sequenceNumber) {
+        return this.pageManager.getTotalPageNumber(mangaId, sequenceNumber);
+    }
 
     @PostMapping("/search")
     public MangaQueryResponse getManga(@RequestBody MangaQuery query) {
@@ -53,7 +61,7 @@ public class MangaController {
     @ExceptionHandler(NoSuchMangaException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public String invalidId(NoSuchMangaException ex){
+    public String invalidId(NoSuchMangaException ex) {
         return ex.getResponseBody();
     }
 

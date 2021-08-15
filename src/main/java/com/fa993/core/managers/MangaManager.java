@@ -2,7 +2,8 @@ package com.fa993.core.managers;
 
 import com.fa993.core.dto.*;
 import com.fa993.core.exceptions.NoSuchMangaException;
-import com.fa993.core.pojos.*;
+import com.fa993.core.pojos.Manga;
+import com.fa993.core.pojos.MangaQuery;
 import com.fa993.core.repositories.MangaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
@@ -36,38 +36,10 @@ public class MangaManager {
     @PersistenceContext
     EntityManager manager;
 
-    private CriteriaQuery findQuery;
-
     public MangaManager() {
     }
 
     public Collection<MangaHeading> findAllByQuery(MangaQuery query) {
-//        QManga mn = QManga.manga;
-//        MorphiaQuery<Manga> q = new MorphiaQuery<Manga>(m, ds, mn);
-//        List<Manga> hd = q.where(mn.name.contains(query.getName())).fetch(mn.name, mn.coverURL);
-//        return ds.find(Manga.class).filter(Filters.regex("name").pattern(".*" + query.getName() + ".*").caseInsensitive().special()).iterator(new FindOptions().projection().include("name", "url", "coverURL", "id").skip(query.getOffset()).limit(query.getLimit())).toList();
-//        CriteriaBuilder cb = manager.getCriteriaBuilder();
-//        CriteriaQuery<MangaHeading> q = cb.createQuery(MangaHeading.class);
-//        Root<Manga> rt = q.from(Manga.class);
-//        Subquery<String> sq = q.subquery(String.class);
-//        Root<Title> subRt = sq.from(Title.class);
-//        sq.select(subRt.get(Title_.linkedId)).distinct(true).where(
-//                cb.like(subRt.get(Title_.title), "%" + query.getName() + "%")
-//        );
-//        q.multiselect(rt.get(Manga_.id), rt.get(Manga_.name), rt.get(Manga_.coverURL), rt.get(Manga_.descriptionSmall), cb.function("group_concat_distinct", String.class, rt.join(Manga_.genres, JoinType.INNER).get(Genre_.genre)))
-//                .where(
-//                        cb.and(
-//                                cb.in(rt.get(Manga_.linkedId)).value(sq),
-//                                cb.isTrue(rt.get(Manga_.isListed)),
-//                                cb.equal(rt.get(Manga_.source).get(Source_.id), query.getPreferredSourceId())
-//                        )
-//                )
-//                .groupBy(rt.get(Manga_.linkedId))
-//                .having(
-//                        cb.greaterThan(
-//                                cb.count(rt.get(Manga_.linkedId)), 1L
-//                        )
-//                );
         List ids;
         if (query.getPreferredSourceId() != null) {
             ids = manager.createNativeQuery(FIND_QUERY_WITH_SOURCE)
@@ -104,21 +76,11 @@ public class MangaManager {
     }
 
     public boolean isAlreadyProcessed(String url) {
-//        QManga manga = QManga.manga;
-//        JPAQuery<?> q =  new JPAQuery(entityManager);
-//        return q.select(manga).from(manga).where(manga.url.contains(url)).fetchOne() != null;
-//        return ds.find(Manga.class).filter(Filters.eq("url", url)).count() != 0;
         return repo.existsByUrl(url);
     }
 
 
     public void insert(Manga manga) {
-        //add check for linkage
-//        entityManager.persist(new Manga(rec, c));
-//        Manga mn = new Manga(rec, c);
-//        ds.save(mn);
-//        ds.save(rec.chapters().stream().map(t-> new Chapter(mn.getId(), t)).collect(Collectors.toList()));
-//        manager.persist(new Manga(rec, c));
         manager.persist(manga);
     }
 
@@ -136,7 +98,5 @@ public class MangaManager {
     }
 
     public void deleteAll() {
-//        ds.find(Manga.class).delete(new DeleteOptions().multi(true));
-//        ds.find(Chapter.class).delete(new DeleteOptions().multi(true));
     }
 }
