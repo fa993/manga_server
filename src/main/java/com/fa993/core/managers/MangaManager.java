@@ -66,7 +66,7 @@ public class MangaManager {
     }
 
     public CompleteManga getById(String id) {
-        MainMangaData main = Optional.ofNullable(repo.getById(id)).orElseThrow(() -> new NoSuchMangaException(id));
+        MainMangaData main = Optional.ofNullable(repo.getById(id)).orElseThrow(() -> NoSuchMangaException.constructFromID(id));
         List<LinkedMangaData> linked = repo.findAllByLinkedIdAndIdNot(main.getLinkedId(), main.getId());
         return new CompleteManga(main, linked);
     }
@@ -78,18 +78,25 @@ public class MangaManager {
     public boolean isAlreadyProcessed(String url) {
         return repo.existsByUrl(url);
     }
+    
+    public Manga getMangaByURL(String url) {
+    	return repo.findByUrl(url);
+    }
 
 
     public void insert(Manga manga) {
         manager.persist(manga);
     }
-
+    
+    public void update(Manga manga) {
+    	manager.merge(manga);
+    }
+    
     public MangaHeadingProper tthumbnail() {
         return repo.findAllBy(PageRequest.of(0, 1)).toList().get(0);
     }
 
     public List<MangaHeadingProper> thome(int offset, int limit) {
-//        return ds.find(Manga.class).iterator(new FindOptions().projection().include("name", "url", "coverURL", "id", "metadata.description", "metadata.genres").skip(offset).limit(limit)).toList();
         return repo.findAllBy(PageRequest.of(offset / limit, limit)).toList();
     }
 

@@ -37,7 +37,10 @@ public class App implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-//        genreManager.registerError("not available");
-//        new MultiThreadScrapper(mangaManager, sourceManager, authorManager, genreManager, pageManager, titleManager, problemChildManager).run();
+        genreManager.registerError("not available");
+//      MultiThreadScrapper scp = new MultiThreadScrapper(mangaManager, sourceManager, authorManager, genreManager, pageManager, titleManager, problemChildManager);
+//    	scp.prime();
+//      scp.watch();
+//    	scp.run();
     }
 }

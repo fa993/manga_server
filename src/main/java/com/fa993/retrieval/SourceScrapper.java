@@ -1,5 +1,7 @@
 package com.fa993.retrieval;
 
+import com.fa993.core.exceptions.MangaFetchingException;
+import com.fa993.core.exceptions.PageProcessingException;
 import com.fa993.core.pojos.Source;
 import com.fa993.retrieval.pojos.MangaDTO;
 
@@ -39,17 +41,18 @@ public interface SourceScrapper {
         }
     }
 
-    public MangaDTO getManga(String url) throws Exception;
+    public MangaDTO getManga(String url) throws MangaFetchingException;
 
-    public Integer getNumberOfPages();
+    public Integer getCompleteNumberOfPages();
+    
+    public void getLiterallyEveryLink(int x, Consumer<String> onProcessed) throws PageProcessingException;
 
-    public void getLiterallyEveryLink(int x, Consumer<String> func);
+    public Integer getNumberOfPagesToWatch();
+    
+    public void watch(int x, Consumer<String> onProcessed) throws PageProcessingException;
 
     public Source getSource();
 
     public List<String> getAllGenre();
 
-    public void acceptOnProblem(Consumer<String> func);
-
-    public void watch(int x, Consumer<String> func);
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MangaRepository extends JpaRepository<Manga, String> {
 
@@ -16,4 +17,5 @@ public interface MangaRepository extends JpaRepository<Manga, String> {
     public Page<MangaHeadingProper> findAllBy(Pageable pageable);
     public List<LinkedMangaData> findAllByLinkedIdAndIdNot(String linkedId, String mangaId);
     public MainMangaData getById(String id);
+    public Manga findByUrl(String url);
 }
