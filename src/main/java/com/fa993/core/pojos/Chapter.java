@@ -1,129 +1,155 @@
 package com.fa993.core.pojos;
 
-import com.fa993.retrieval.pojos.ChapterDTO;
-
-import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+
+import com.fa993.retrieval.pojos.ChapterDTO;
+
 @Entity
 @Table(name = "chapter")
 public class Chapter {
 
-    @Id
-    @Column(name = "chapter_id")
-    private String id;
+	@Id
+	@Column(name = "chapter_id")
+	private String id;
 
-    @Column(name = "manga_id")
-    private String mangaId;
+	@Column(name = "manga_id")
+	private String mangaId;
 
-    @Column(name = "sequence_number")
-    private Integer sequenceNumber;
+	@Column(name = "sequence_number")
+	private Integer sequenceNumber;
 
-    @Column(name = "chapter_name")
-    private String chapterName;
+	@Column(name = "chapter_name")
+	private String chapterName;
 
-    @Column(name = "chapter_number")
-    private String chapterNumber;
+	@Column(name = "chapter_number")
+	private String chapterNumber;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "chapter_id", referencedColumnName = "chapter_id")
-    private List<Page> imagesURL;
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "chapter_id", referencedColumnName = "chapter_id")
+	private List<Page> imagesURL;
 
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
+	@Column(name = "updated_at")
+	private Timestamp updatedAt;
 
-    public Chapter() {
-    }
+	@Column(name = "last_watch_time")
+	private Long watchTime;
 
-    public Chapter(String id, String mangaId, Integer sequenceNumber, String chapterName, String chapterNumber, List<String> imagesURL, Instant updatedAt) {
-        this.id = id;
-        this.mangaId = mangaId;
-        this.sequenceNumber = sequenceNumber;
-        this.chapterName = chapterName;
-        this.chapterNumber = chapterNumber;
-        this.imagesURL = new ArrayList<>();
-        for(int i = 0; i < imagesURL.size(); i++){
-            this.imagesURL.add(new Page(i, imagesURL.get(i)));
-        }
-        this.updatedAt = updatedAt == null ? null : Timestamp.from(updatedAt);
-    }
+	public Chapter() {
+	}
 
-    public Chapter(String mangaId, ChapterDTO rec) {
-        this(null, mangaId, rec.getSequenceNumber(), rec.getChapterName(), rec.getChapterNumber(), rec.getImagesURL(), rec.getUpdatedAt());
-    }
+	public Chapter(String id, String mangaId, Integer sequenceNumber, String chapterName, String chapterNumber,
+			List<String> imagesURL, Instant updatedAt, Long watchTime) {
+		this.id = id;
+		this.mangaId = mangaId;
+		this.sequenceNumber = sequenceNumber;
+		this.chapterName = chapterName;
+		this.chapterNumber = chapterNumber;
+		this.imagesURL = new ArrayList<>();
+		for (int i = 0; i < imagesURL.size(); i++) {
+			this.imagesURL.add(new Page(i, imagesURL.get(i)));
+		}
+		this.updatedAt = updatedAt == null ? null : Timestamp.from(updatedAt);
+		this.watchTime = watchTime;
+	}
 
-    public Chapter(ChapterDTO rec) {
-        this(null, rec);
-    }
+	public Chapter(String mangaId, ChapterDTO rec) {
+		this(null, mangaId, rec.getSequenceNumber(), rec.getChapterName(), rec.getChapterNumber(), rec.getImagesURL(),
+				rec.getUpdatedAt(), rec.getWatchTime());
+	}
 
-    public String getId() {
-        return id;
-    }
+	public Chapter(ChapterDTO rec) {
+		this(null, rec);
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public String getMangaId() {
-        return mangaId;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setMangaId(String mangaId) {
-        this.mangaId = mangaId;
-    }
+	public String getMangaId() {
+		return mangaId;
+	}
 
-    public String getChapterName() {
-        return chapterName;
-    }
+	public void setMangaId(String mangaId) {
+		this.mangaId = mangaId;
+	}
 
-    public void setChapterName(String chapterName) {
-        this.chapterName = chapterName;
-    }
+	public Integer getSequenceNumber() {
+		return sequenceNumber;
+	}
 
-    public String getChapterNumber() {
-        return chapterNumber;
-    }
+	public void setSequenceNumber(Integer sequenceNumber) {
+		this.sequenceNumber = sequenceNumber;
+	}
 
-    public void setChapterNumber(String chapterNumber) {
-        this.chapterNumber = chapterNumber;
-    }
+	public String getChapterName() {
+		return chapterName;
+	}
 
-    public List<Page> getImagesURL() {
-        return imagesURL;
-    }
+	public void setChapterName(String chapterName) {
+		this.chapterName = chapterName;
+	}
 
-    public void setImagesURL(List<Page> imagesURL) {
-        this.imagesURL = imagesURL;
-    }
+	public String getChapterNumber() {
+		return chapterNumber;
+	}
 
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
+	public void setChapterNumber(String chapterNumber) {
+		this.chapterNumber = chapterNumber;
+	}
 
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+	public List<Page> getImagesURL() {
+		return imagesURL;
+	}
 
-    @PrePersist
-    public void prePersist() {
-        if (this.id == null) {
-            this.id = UUID.randomUUID().toString();
-        }
-    }
+	public void setImagesURL(List<Page> imagesURL) {
+		this.imagesURL = imagesURL;
+	}
 
-    @Override
-    public String toString() {
-        return "Chapter{" +
-                "id='" + id + '\'' +
-                ", mangaId='" + mangaId + '\'' +
-                ", chapterName='" + chapterName + '\'' +
-                ", chapterNumber='" + chapterNumber + '\'' +
-                ", imagesURL=" + imagesURL +
-                ", updatedAt=" + updatedAt +
-                '}';
-    }
+	public Timestamp getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Timestamp updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public Long getWatchTime() {
+		return watchTime;
+	}
+
+	public void setWatchTime(Long watchTime) {
+		this.watchTime = watchTime;
+	}
+
+	@PrePersist
+	public void prePersist() {
+		if (this.id == null) {
+			this.id = UUID.randomUUID().toString();
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "Chapter [id=" + id + ", mangaId=" + mangaId + ", sequenceNumber=" + sequenceNumber + ", chapterName="
+				+ chapterName + ", chapterNumber=" + chapterNumber + ", imagesURL=" + imagesURL + ", updatedAt="
+				+ updatedAt + ", watchTime=" + watchTime + "]";
+	}
+
 }

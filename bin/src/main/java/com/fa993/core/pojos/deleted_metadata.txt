@@ -1,0 +1,145 @@
+package com.fa993.core.pojos;
+
+import com.fa993.utils.Utility;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fa993.retrieval.pojos.MangaMetadataRecord;
+
+import javax.persistence.*;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+@Entity
+@Table(name = "manga_metadata")
+public class MangaMetadata {
+
+    @Id
+    @Column(name = "manga_metadata_id")
+    private String id;
+
+    @Column(name = "manga_id")
+    private String mangaId;
+
+    @OneToMany(mappedBy = "author")
+    private List<String> authors;
+
+    @OneToMany(mappedBy = "alternative_name")
+    private List<AlternativeName> alternativeNames;
+
+    @Column(name = "last_updated")
+    private Instant lastUpdated;
+
+    @JsonView(Views.PrettyHeading.class)
+    @Column(name = "description")
+    private String description;
+
+    @JsonView(Views.PrettyHeading.class)
+    private List<Genre> genres;
+
+    @Column(name = "status")
+    private String status;
+
+    public MangaMetadata(String id, String mangaId, List<String> authors, List<String> alternativeNames, Instant lastUpdated, String description, List<String> genres, String status) {
+        init(id, mangaId, authors, alternativeNames, lastUpdated, description, genres, status);
+    }
+
+    public MangaMetadata(String mangaId, MangaMetadataRecord rec) {
+        init(null, mangaId, rec.authors(), rec.alternativeNames(), rec.lastUpdated(), rec.description(), rec.genres(), rec.status());
+    }
+
+    public void init(String id, String mangaId, List<String> authors, List<String> alternativeNames, Instant lastUpdated, String description, List<String> genres, String status) {
+        this.id = id;
+        this.mangaId = mangaId;
+        this.authors = authors;
+        this.alternativeNames = alternativeNames.stream().map(t -> new AlternativeName(t)).toList();
+        this.lastUpdated = lastUpdated;
+        this.description = description;
+        this.genres = genres.stream().map(t-> new Genre(t)).toList();
+        this.status = status;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getMangaId() {
+        return mangaId;
+    }
+
+    public void setMangaId(String mangaId) {
+        this.mangaId = mangaId;
+    }
+
+    public List<String> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(List<String> authors) {
+        this.authors = authors;
+    }
+
+    public List<AlternativeName> getAlternativeNames() {
+        return alternativeNames;
+    }
+
+    public void setAlternativeNames(List<AlternativeName> alternativeNames) {
+        this.alternativeNames = alternativeNames;
+    }
+
+    public Instant getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Instant lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if(this.id == null) {
+            this.id = Utility.getID();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "MangaMetadata{" +
+                "id='" + id + '\'' +
+                ", mangaId='" + mangaId + '\'' +
+                ", authors=" + authors +
+                ", alternativeNames=" + alternativeNames +
+                ", lastUpdated=" + lastUpdated +
+                ", description='" + description + '\'' +
+                ", genres=" + genres +
+                ", status='" + status + '\'' +
+                '}';
+    }
+}

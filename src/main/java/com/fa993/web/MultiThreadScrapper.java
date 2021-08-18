@@ -1,25 +1,38 @@
 package com.fa993.web;
 
-import com.fa993.core.exceptions.MangaFetchingException;
-import com.fa993.core.exceptions.PageProcessingException;
-import com.fa993.core.managers.*;
-import com.fa993.core.pojos.Chapter;
-import com.fa993.core.pojos.Manga;
-import com.fa993.retrieval.Scrapper;
-import com.fa993.retrieval.SourceScrapper;
-import com.fa993.retrieval.pojos.ChapterDTO;
-import com.fa993.retrieval.pojos.MangaDTO;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ScanResult;
-
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+
+import com.fa993.core.exceptions.MangaFetchingException;
+import com.fa993.core.exceptions.PageProcessingException;
+import com.fa993.core.managers.AuthorManager;
+import com.fa993.core.managers.GenreManager;
+import com.fa993.core.managers.MangaManager;
+import com.fa993.core.managers.PageManager;
+import com.fa993.core.managers.ProblemChildManager;
+import com.fa993.core.managers.SourceManager;
+import com.fa993.core.managers.TitleManager;
+import com.fa993.core.pojos.Chapter;
+import com.fa993.core.pojos.Manga;
+import com.fa993.core.pojos.Page;
+import com.fa993.retrieval.Scrapper;
+import com.fa993.retrieval.SourceScrapper;
+import com.fa993.retrieval.pojos.ChapterDTO;
+import com.fa993.retrieval.pojos.MangaDTO;
+
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 
 public class MultiThreadScrapper {
 
@@ -144,6 +157,7 @@ public class MultiThreadScrapper {
 							System.out.println("Inserted Problem " + e.getURL());
 						}
 						if (mn != null) {
+							mn.getChapters().forEach(f -> f.setWatchTime(System.currentTimeMillis()));
 							mangaManager.insert(parse(mn));
 							System.out.println("Inserted " + mn.getPrimaryTitle());
 							c.increment();
@@ -218,6 +232,11 @@ public class MultiThreadScrapper {
 									}
 									return;
 								} else {
+									dto.getChapters().forEach(g -> {
+										if(g.getWatchTime() == null) {
+											g.setWatchTime(System.currentTimeMillis());
+										}
+									});
 									mangaManager.update(parse(dto));
 									System.out.println("Updated: " + dto.getPrimaryTitle());
 								}
@@ -237,13 +256,37 @@ public class MultiThreadScrapper {
 	}
 
 	private boolean equals(Manga m, MangaDTO md) {
-		// TODO
-		return true;
+		return m.getName().equals(md.getPrimaryTitle()) && m.getUrl().equals(md.getURL())
+				&& m.getCoverURL().equals(md.getCoverURL()) && m.getDescription().equals(md.getDescription())
+				&& m.getSource().equals(md.getSource()) && m.isListed() == true && m.getStatus().equals(md.getStatus())
+				&& m.getGenres().equals(md.getGenres()) && m.getAuthors().equals(md.getAuthors())
+				&& m.getArtists().equals(md.getArtists())
+				&& listEquals(m.getChapters(), md.getChapters(), (c, cd) -> equals(c, cd));
 	}
 
 	private boolean equals(Chapter c, ChapterDTO cd) {
-		// TODO
-		return true;
+		return c.getChapterName().equals(cd.getChapterName()) && c.getChapterNumber().equals(cd.getChapterNumber())
+				&& c.getSequenceNumber().equals(cd.getSequenceNumber())
+				&& c.getUpdatedAt().toInstant().equals(cd.getUpdatedAt())
+				&& listEquals(c.getImagesURL(), cd.getImagesURL(), (p, s) -> p.getUrl().equals(s));
+	}
+
+	private <T, U> boolean listEquals(List<T> firstList, List<U> secondList, BiPredicate<T, U> equality) {
+		try {
+			if (firstList.size() != secondList.size()) {
+				return false;
+			}
+			for (int i = 0; i < firstList.size(); i++) {
+				if (!equality.test(firstList.get(i), secondList.get(i))) {
+					return false;
+				}
+			}
+			return true;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+
 	}
 
 	private Manga parse(MangaDTO rec) {

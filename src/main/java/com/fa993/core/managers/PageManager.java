@@ -1,15 +1,17 @@
 package com.fa993.core.managers;
 
-import com.fa993.core.dto.PageURL;
-import com.fa993.core.repositories.PageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.math.BigInteger;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.math.BigInteger;
-import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fa993.core.dto.PageURL;
+import com.fa993.core.repositories.PageRepository;
 
 @Service
 @Transactional
