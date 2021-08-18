@@ -10,9 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 import com.fa993.core.exceptions.MangaFetchingException;
 import com.fa993.core.exceptions.PageProcessingException;
@@ -25,7 +23,6 @@ import com.fa993.core.managers.SourceManager;
 import com.fa993.core.managers.TitleManager;
 import com.fa993.core.pojos.Chapter;
 import com.fa993.core.pojos.Manga;
-import com.fa993.core.pojos.Page;
 import com.fa993.retrieval.Scrapper;
 import com.fa993.retrieval.SourceScrapper;
 import com.fa993.retrieval.pojos.ChapterDTO;
@@ -233,7 +230,7 @@ public class MultiThreadScrapper {
 									return;
 								} else {
 									dto.getChapters().forEach(g -> {
-										if(g.getWatchTime() == null) {
+										if (g.getWatchTime() == null) {
 											g.setWatchTime(System.currentTimeMillis());
 										}
 									});
