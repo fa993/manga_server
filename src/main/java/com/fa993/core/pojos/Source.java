@@ -1,6 +1,7 @@
 package com.fa993.core.pojos;
 
 import com.fa993.utils.Utility;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 
@@ -15,14 +16,17 @@ public class Source {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "priority")
+    private Integer priority;
+
     public Source() {
     }
 
-    public Source(String name) {
+    public Source(String name, int id) {
         this.name = name;
     }
 
-    public Source(String id, String name) {
+    public Source(String id, String name, int priority) {
         this.id = id;
         this.name = name;
     }
@@ -41,6 +45,14 @@ public class Source {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
     @PrePersist

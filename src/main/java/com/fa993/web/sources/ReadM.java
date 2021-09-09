@@ -36,7 +36,7 @@ public class ReadM implements SourceScrapper {
 	private final Source s;
 
 	public ReadM(SourceManager manager) {
-		this.s = manager.getSource("readm");
+		this.s = manager.getSource("readm", 1);
 	}
 
 	@Override

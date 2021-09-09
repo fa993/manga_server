@@ -1,6 +1,7 @@
 package com.fa993;
 
 import com.fa993.core.managers.*;
+import com.google.firebase.FirebaseApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -38,6 +39,7 @@ public class App implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         genreManager.registerError("not available");
+//      FirebaseApp.initializeApp(); //will test on compute
 //      MultiThreadScrapper scp = new MultiThreadScrapper(mangaManager, sourceManager, authorManager, genreManager, pageManager, titleManager, problemChildManager);
 //    	scp.prime();
 //      scp.watch();

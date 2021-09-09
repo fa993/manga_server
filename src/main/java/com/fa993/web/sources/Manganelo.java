@@ -45,7 +45,7 @@ public class Manganelo implements SourceScrapper {
 	private final Integer noOfPages;
 
 	public Manganelo(SourceManager m) {
-		s = m.getSource("manganelo");
+		s = m.getSource("manganelo", 2);
 		this.noOfPages = loadElement();
 	}
 

@@ -17,7 +17,7 @@ public interface MainMangaData {
 
     public String getCoverURL();
 
-    public Source getSource();
+    public SourceData getSource();
 
     public List<ChapterData> getChapters();
 

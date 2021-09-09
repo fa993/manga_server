@@ -13,8 +13,8 @@ public class SourceManager {
     @Autowired
     SourceRepository repo;
 
-    public Source getSource(String source) {
-        return Optional.ofNullable(repo.findByName(source)).orElseGet(() -> repo.save(new Source(source)));
+    public Source getSource(String source, int priority) {
+        return Optional.ofNullable(repo.findByName(source)).orElseGet(() -> repo.save(new Source(source, priority)));
     }
 
 }
