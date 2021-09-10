@@ -49,15 +49,9 @@ public class MangaController {
         return new MangaQueryResponse(query, mangaManager.findAllByQuery(query));
     }
 
-    @GetMapping("/thumbnail")
-    public MangaHeadingProper getThumbnail() {
-        System.out.println("Reached here");
-        return mangaManager.tthumbnail();
-    }
-
-    @GetMapping("/home")
-    public Collection<MangaHeadingProper> getHomePage(@RequestParam(defaultValue = "0") int offset, @RequestParam(defaultValue = "10") int limit) {
-        return mangaManager.thome(offset, limit);
+    @PostMapping("/home")
+    public MangaQueryResponse getHomePage(@RequestBody MangaQuery query) {
+        return new MangaQueryResponse(query, mangaManager.getHome(query));
     }
 
     @ExceptionHandler(NoSuchMangaException.class)
