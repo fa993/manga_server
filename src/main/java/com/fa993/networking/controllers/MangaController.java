@@ -1,20 +1,14 @@
 package com.fa993.networking.controllers;
 
-import com.fa993.core.dto.ChapterPosition;
-import com.fa993.core.dto.CompleteManga;
-import com.fa993.core.dto.MangaHeadingProper;
-import com.fa993.core.dto.PageURL;
+import com.fa993.core.dto.*;
 import com.fa993.core.exceptions.NoSuchMangaException;
 import com.fa993.core.managers.PageManager;
 import com.fa993.core.pojos.MangaQuery;
-import com.fa993.core.pojos.MangaQueryResponse;
 import com.fa993.core.managers.MangaManager;
-import com.fa993.core.pojos.Views;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fa993.core.pojos.MangaQueryResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController

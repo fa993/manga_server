@@ -22,13 +22,14 @@ public class Source {
     public Source() {
     }
 
-    public Source(String name, int id) {
-        this.name = name;
-    }
-
     public Source(String id, String name, int priority) {
         this.id = id;
         this.name = name;
+        this.priority = priority;
+    }
+
+    public Source(String name, int priority){
+        this(null, name, priority);
     }
 
     public String getId() {

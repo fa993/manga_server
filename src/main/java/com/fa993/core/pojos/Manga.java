@@ -31,7 +31,7 @@ public class Manga {
     private String url;
 
     @Column(name = "is_listed")
-    private boolean isListed;
+    private boolean listed;
 
     @ManyToOne
     @JoinColumn(name = "source_id", referencedColumnName = "source_id")
@@ -78,6 +78,9 @@ public class Manga {
 
     @Column(name = "status")
     private String status;
+
+    @Column(name = "is_main")
+    private boolean main;
 
     public static Manga fromURL(String url) {
         Manga m = new Manga();
@@ -136,11 +139,11 @@ public class Manga {
     }
 
     public boolean isListed() {
-        return isListed;
+        return listed;
     }
 
     public void setListed(boolean listed) {
-        isListed = listed;
+        this.listed = listed;
     }
 
     public Source getSource() {
@@ -215,6 +218,14 @@ public class Manga {
         this.status = status;
     }
 
+    public boolean isMain() {
+        return main;
+    }
+
+    public void setMain(boolean main) {
+        this.main = main;
+    }
+
     @PrePersist
     public void prePersist() {
         if (this.id == null) {
@@ -230,15 +241,18 @@ public class Manga {
                 ", name='" + name + '\'' +
                 ", coverURL='" + coverURL + '\'' +
                 ", url='" + url + '\'' +
-                ", isListed=" + isListed +
+                ", isListed=" + listed +
                 ", source=" + source +
                 ", chapters=" + chapters +
                 ", authors=" + authors +
+                ", artists=" + artists +
                 ", lastUpdated=" + lastUpdated +
                 ", description='" + description + '\'' +
                 ", descriptionSmall='" + descriptionSmall + '\'' +
                 ", genres=" + genres +
                 ", status='" + status + '\'' +
+                ", isMain=" + main +
                 '}';
     }
+
 }

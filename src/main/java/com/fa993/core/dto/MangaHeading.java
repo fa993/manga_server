@@ -1,6 +1,15 @@
 package com.fa993.core.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public interface MangaHeading {
 
-public record MangaHeading(@JsonProperty("id") String id, @JsonProperty("name") String name, @JsonProperty("coverURL") String coverURL, @JsonProperty("smallDescription") String descriptionSmall, @JsonProperty("genres") String allGenres) {
+    public String getId();
+
+    public String getName();
+
+    public String getCoverURL();
+
+    public String getGenres();
+
+    public String getSmallDescription();
+
 }

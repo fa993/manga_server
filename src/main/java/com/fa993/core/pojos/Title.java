@@ -12,7 +12,7 @@ public class Title {
     @Column(name = "title_id")
     private String id;
 
-    @Column(name = "name")
+    @Column(name = "title")
     private String title;
 
     @Column(name = "linked_id")

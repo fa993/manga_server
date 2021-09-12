@@ -4,12 +4,13 @@ import com.fa993.retrieval.pojos.MangaDTO;
 
 public class MangaFetchingException extends RuntimeException {
 	
-	private String url;
-	private MangaDTO partiallyProcessed;
+	private final String url;
+	private final MangaDTO partiallyProcessed;
 	
 	public MangaFetchingException(String url, MangaDTO dto, Throwable t) {
 		super(t);
 		this.url = url;
+		this.partiallyProcessed = dto;
 	}
 	
 	public String getURL() {

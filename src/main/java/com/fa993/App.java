@@ -1,6 +1,7 @@
 package com.fa993;
 
 import com.fa993.core.managers.*;
+import com.fa993.web.MultiThreadScrapper;
 import com.google.firebase.FirebaseApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;

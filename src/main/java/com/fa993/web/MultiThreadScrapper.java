@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 
 import com.fa993.core.exceptions.MangaFetchingException;
@@ -72,18 +73,21 @@ public class MultiThreadScrapper {
             Thread t = new Thread(r);
             t.setDaemon(true);
             return t;
-        }));
+        }, new ThreadPoolExecutor.CallerRunsPolicy()));
         this.runExecutors = new ThreadPoolExecutor(0, runThreads, 60L, TimeUnit.SECONDS,
                 new SynchronousQueue<Runnable>(), r -> {
             Thread t = new Thread(r);
             t.setDaemon(true);
             return t;
-        });
-        this.callbackExecutor = Executors.newCachedThreadPool(r -> {
-            Thread t = new Thread(r);
-            t.setDaemon(true);
-            return t;
-        });
+        }, new ThreadPoolExecutor.CallerRunsPolicy());
+        this.callbackExecutor = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                60L, TimeUnit.SECONDS,
+                new SynchronousQueue<Runnable>(),
+                r -> {
+                    Thread t = new Thread(r);
+                    t.setDaemon(true);
+                    return t;
+                }, new ThreadPoolExecutor.CallerRunsPolicy());
         ScanResult rs = new ClassGraph().acceptPackages(this.getClass().getPackageName()).enableAllInfo().scan();
         this.sct = new ArrayList<>();
         rs.getClassesWithAnnotation(Scrapper.class.getName())
@@ -113,16 +117,21 @@ public class MultiThreadScrapper {
     public void run() {
 
         LinkedBlockingQueue<MangaPage> pgs = new LinkedBlockingQueue<>();
-
-        sct.stream().unordered().map(t -> new Thread(() -> {
-            int x = t.getCompleteNumberOfPages();
-            for (int i = 1; i <= x; i++) {
-                pgs.add(new MangaPage(i, t));
+        int[] curr = new int[sct.size()];
+        int tot = sct.stream().reduce(0, (o, i) -> o += i.getCompleteNumberOfPages(), Integer::sum);
+        for(int i = 0; i < tot; i++) {
+            int in = i % curr.length;
+            int x = curr[in];
+            if(x < sct.get(in).getCompleteNumberOfPages()){
+                pgs.add(new MangaPage(x + 1, sct.get(in)));
+                curr[in]++;
+            } else {
+                tot++;
             }
-        })).forEach(t -> t.start());
+        }
 
         long t0 = System.currentTimeMillis();
-        Counter c = new Counter();
+        AtomicInteger c = new AtomicInteger(0);
 
         Thread tl = new Thread(() -> {
             while (true) {
@@ -161,12 +170,13 @@ public class MultiThreadScrapper {
                             mn = e.getPartialManga();
                             problemChildManager.insert(e.getURL());
                             System.out.println("Inserted Problem " + e.getURL());
-                        }
-                        if (mn != null) {
-                            mn.getChapters().forEach(f -> f.setWatchTime(System.currentTimeMillis()));
-                            mangaManager.insert(parse(mn));
-                            System.out.println("Inserted " + mn.getPrimaryTitle());
-                            c.increment();
+                        } finally {
+                            if (mn != null) {
+                                mn.getChapters().forEach(f -> f.setWatchTime(System.currentTimeMillis()));
+                                mangaManager.insert(parse(mn));
+                                System.out.println("Inserted " + mn.getPrimaryTitle());
+                                c.incrementAndGet();
+                            }
                         }
                     });
                     System.out.println("Processed page: " + x);
@@ -222,12 +232,12 @@ public class MultiThreadScrapper {
             }
         }).start());
 
-        Counter prMn = new Counter();
+        AtomicInteger c = new AtomicInteger(0);
         long t0 = System.currentTimeMillis();
 
         Thread tl = new Thread(() -> {
             while (true) {
-                System.out.println("Processed " + prMn.get() + " manga till now in "
+                System.out.println("Processed " + c.get() + " manga till now in "
                         + (System.currentTimeMillis() - t0) / 1000 + " seconds");
                 try {
                     Thread.sleep(5000);
@@ -239,10 +249,10 @@ public class MultiThreadScrapper {
         tl.setDaemon(true);
         tl.start();
 
-        return pgs.stream().unordered().map(t -> this.watchExecutors.submit(() -> doWatch(watchMode, pgs, prMn))).toList();
+        return pgs.stream().unordered().map(t -> this.watchExecutors.submit(() -> doWatch(watchMode, pgs, c))).toList();
     }
 
-    private void doWatch(WatchMode watchMode, LinkedBlockingQueue<MangaPage> pgs, Counter prMn) {
+    private void doWatch(WatchMode watchMode, LinkedBlockingQueue<MangaPage> pgs, AtomicInteger c) {
         try {
             MangaPage x = pgs.take();
             SourceScrapper sc = x.getScrapper();
@@ -264,38 +274,39 @@ public class MultiThreadScrapper {
                         e.printStackTrace();
                         problemChildManager.insert(e.getURL());
                         System.out.println("Happened with problem : " + e.getURL());
-                    }
-                    if (dto != null) {
-                        Manga l = mangaManager.getMangaByURL(t);
-                        boolean a = metadataEqualsOnly(l, dto);
-                        boolean b = chapterListEqualsOnly(l, dto);
-                        boolean same = a || b;
-                        if (same) {
-                            if (watchMode == WatchMode.SHALLOW) {
-                                watching = true;
-                                System.out.println("Encountered duplicate in shallow mode... shutting down");
-                            } else if (watchMode == WatchMode.DEEP) {
-                                System.out.println("Encountered duplicate in deep mode... doing nothing");
-                            }
-                            return;
-                        } else {
-                            dto.getChapters().forEach(g -> {
-                                if (g.getWatchTime() == null) {
-                                    g.setWatchTime(System.currentTimeMillis());
+                    } finally {
+                        if (dto != null) {
+                            Manga l = mangaManager.getMangaByURL(t);
+                            boolean a = metadataEqualsOnly(l, dto);
+                            boolean b = chapterListEqualsOnly(l, dto);
+                            boolean same = a || b;
+                            if (same) {
+                                if (watchMode == WatchMode.SHALLOW) {
+                                    watching = true;
+                                    System.out.println("Encountered duplicate in shallow mode... shutting down");
+                                } else if (watchMode == WatchMode.DEEP) {
+                                    System.out.println("Encountered duplicate in deep mode... doing nothing");
                                 }
-                            });
-                            mangaManager.update(parse(dto));
-                            System.out.println("Updated: " + dto.getPrimaryTitle());
-                            if (!b) {
-                                try {
-                                    Message m = Message.builder().setTopic(l.getId()).setNotification(Notification.builder().setTitle("Manga Update").setBody(dto.getPrimaryTitle() + " has been updated").build()).build();
-                                    FirebaseMessaging.getInstance().send(m);
-                                } catch (FirebaseMessagingException e) {
-                                    e.printStackTrace();
+                                return;
+                            } else {
+                                dto.getChapters().forEach(g -> {
+                                    if (g.getWatchTime() == null) {
+                                        g.setWatchTime(System.currentTimeMillis());
+                                    }
+                                });
+                                mangaManager.update(parse(dto));
+                                System.out.println("Updated: " + dto.getPrimaryTitle());
+                                if (!b) {
+                                    try {
+                                        Message m = Message.builder().setTopic(l.getId()).setNotification(Notification.builder().setTitle("Manga Update").setBody(dto.getPrimaryTitle() + " has been updated").build()).build();
+                                        FirebaseMessaging.getInstance().send(m);
+                                    } catch (FirebaseMessagingException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
+                            c.incrementAndGet();
                         }
-                        prMn.increment();
                     }
                 });
             } catch (PageProcessingException p) {
@@ -345,6 +356,18 @@ public class MultiThreadScrapper {
 
     }
 
+    private void updateEntry() {
+
+    }
+
+    private void insertEntry() {
+
+    }
+
+    private void problemEntry() {
+
+    }
+
     private Manga parse(MangaDTO rec) {
         Manga m = new Manga();
         m.setName(rec.getPrimaryTitle());
@@ -362,24 +385,6 @@ public class MultiThreadScrapper {
         m.setChapters(rec.getChapters().stream().map(Chapter::new).toList());
         m.setLinkedId(titleManager.add(rec.getTitles(), rec.getSource()));
         return m;
-    }
-
-}
-
-class Counter {
-
-    private int i;
-
-    public Counter() {
-        this.i = 0;
-    }
-
-    public int get() {
-        return this.i;
-    }
-
-    public void increment() {
-        this.i++;
     }
 
 }

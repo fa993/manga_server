@@ -2,20 +2,17 @@ package com.fa993.core.pojos;
 
 import com.fa993.core.dto.MangaHeading;
 
-import java.util.Collection;
+import java.util.List;
 
 public class MangaQueryResponse {
 
     private MangaQuery query;
 
-    private Collection<MangaHeading> manga;
+    private List<MangaHeading> headings;
 
-    public MangaQueryResponse(MangaQuery query, Collection<MangaHeading> manga) {
+    public MangaQueryResponse(MangaQuery query, List<MangaHeading> headings) {
         this.query = query;
-        this.manga = manga;
-    }
-
-    public MangaQueryResponse() {
+        this.headings = headings;
     }
 
     public MangaQuery getQuery() {
@@ -26,11 +23,11 @@ public class MangaQueryResponse {
         this.query = query;
     }
 
-    public Collection<MangaHeading> getManga() {
-        return manga;
+    public List<MangaHeading> getHeadings() {
+        return headings;
     }
 
-    public void setManga(Collection<MangaHeading> manga) {
-        this.manga = manga;
+    public void setHeadings(List<MangaHeading> headings) {
+        this.headings = headings;
     }
 }
