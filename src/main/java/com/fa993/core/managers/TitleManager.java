@@ -24,13 +24,13 @@ public class TitleManager {
     EntityManager manager;
 
     public Title getTitle(String title) {
-        return Optional.ofNullable(repo.findFirstByTitle(title)).orElseGet(() -> repo.save(new Title(title)));
+        return Optional.ofNullable(repo.findFirstByTitleIgnoreCase(title)).orElseGet(() -> repo.save(new Title(title)));
     }
 
     public String add(List<String> titles, Source c) {
         String ret = null;
         for (String x : titles) {
-            ret = Optional.ofNullable(repo.findFirstByTitle(x)).map(t -> t.getLinkedId()).orElse(null);
+            ret = Optional.ofNullable(repo.findFirstByTitleIgnoreCase(x)).map(Title::getLinkedId).orElse(null);
             if (ret != null) {
                 break;
             }
@@ -39,7 +39,7 @@ public class TitleManager {
             ret = Utility.getID();
         }
         String finalRet = ret;
-        titles.stream().forEach(t -> manager.persist(new Title(t, finalRet)));
+        titles.forEach(t -> manager.persist(new Title(t, finalRet)));
         return ret;
     }
 

@@ -2,6 +2,7 @@ package com.fa993.core.pojos;
 
 import com.fa993.utils.Utility;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -25,9 +26,11 @@ public class Manga {
 
     @JsonView(Views.Heading.class)
     @Column(name = "cover_url")
+//    @ColumnTransformer(forColumn = "cover_url", read = "UNCOMPRESS(cover_url)", write = "COMPRESS(?)")
     private String coverURL;
 
     @Column(name = "url")
+//    @ColumnTransformer(forColumn = "url", read = "UNCOMPRESS(url)", write = "COMPRESS(?)")
     private String url;
 
     @Column(name = "is_listed")
@@ -80,7 +83,7 @@ public class Manga {
     private String status;
 
     @Column(name = "is_main")
-    private boolean main;
+    private Boolean main;
 
     public static Manga fromURL(String url) {
         Manga m = new Manga();
@@ -218,11 +221,11 @@ public class Manga {
         this.status = status;
     }
 
-    public boolean isMain() {
+    public Boolean isMain() {
         return main;
     }
 
-    public void setMain(boolean main) {
+    public void setMain(Boolean main) {
         this.main = main;
     }
 

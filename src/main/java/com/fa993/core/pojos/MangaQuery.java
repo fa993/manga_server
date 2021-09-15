@@ -1,6 +1,9 @@
 package com.fa993.core.pojos;
 
+import com.fa993.core.dto.GenreData;
 import com.fasterxml.jackson.annotation.JsonView;
+
+import java.util.List;
 
 public class MangaQuery {
 
@@ -19,13 +22,17 @@ public class MangaQuery {
     @JsonView(Views.Query.class)
     private String preferredSourceId;
 
+    @JsonView(Views.Query.class)
+    private List<String> genreIds;
 
-    public MangaQuery(String id, String name, int offset, int limit, String preferredSourceId) {
+
+    public MangaQuery(String id, String name, int offset, int limit, String preferredSourceId, List<String> genreIds) {
         this.id = id;
         this.name = name;
         this.offset = offset;
         this.limit = limit;
         this.preferredSourceId = preferredSourceId;
+        this.genreIds = genreIds;
     }
 
     public MangaQuery() {
@@ -69,5 +76,13 @@ public class MangaQuery {
 
     public void setPreferredSourceId(String preferredSourceId) {
         this.preferredSourceId = preferredSourceId;
+    }
+
+    public List<String> getGenreIds() {
+        return genreIds;
+    }
+
+    public void setGenreIds(List<String> genreIds) {
+        this.genreIds = genreIds;
     }
 }

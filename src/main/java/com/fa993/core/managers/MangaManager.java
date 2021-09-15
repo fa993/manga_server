@@ -47,13 +47,17 @@ public class MangaManager {
     }
 
     public List<MangaHeading> getHome(MangaQuery query) {
-        return repo.getHomePage(query.getOffset(), query.getLimit()).stream().map(t -> repo.fetchHeading(t)).toList();
+        return (query.getGenreIds().isEmpty() ? repo.getHomePage(query.getOffset(), query.getLimit()) : repo.getHomePage(query.getGenreIds(), query.getGenreIds().size(), query.getOffset(), query.getLimit())).stream().map(t -> repo.fetchHeading(t)).toList();
     }
 
     public CompleteManga getById(String id) {
         MainMangaData main = Optional.ofNullable(repo.getById(id)).orElseThrow(() -> NoSuchMangaException.constructFromID(id));
         List<LinkedMangaData> linked = repo.findAllByLinkedIdAndIdNot(main.getLinkedId(), main.getId());
         return new CompleteManga(main, linked);
+    }
+
+    public LinkedMangaData getPartById(String id) {
+        return repo.readById(id);
     }
 
     public boolean isAlreadyProcessed(String url) {
@@ -67,9 +71,24 @@ public class MangaManager {
 
     public void insert(Manga manga) {
         List<MangaPriority> pri = repo.findAllByLinkedId(manga.getLinkedId());
-        boolean ret = pri.stream().reduce(true, (r, e) -> manga.getSource().getPriority() - e.getSource().getPriority() < 0 && r, (l, r) -> l && r);
+        Boolean ret = pri.stream().reduce(true, (r, e) -> {
+            if (r == null) {
+                return r;
+            }
+            int x = manga.getSource().getPriority() - e.getSource().getPriority();
+            if (x == 0) {
+                return null;
+            }
+            return x < 0 && r;
+        }, (l, r) -> {
+            if (l == null || r == null) {
+                return null;
+            } else {
+                return l && r;
+            }
+        });
         manga.setMain(ret);
-        if (ret) {
+        if (ret != null && ret) {
             //TODO sometimes deadlock occurs here
             repo.updateMainState(manga.getLinkedId());
         }

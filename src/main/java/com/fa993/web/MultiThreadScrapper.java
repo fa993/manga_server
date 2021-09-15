@@ -33,6 +33,7 @@ import com.google.firebase.messaging.Notification;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+import org.springframework.dao.CannotAcquireLockException;
 
 public class MultiThreadScrapper {
 
@@ -119,10 +120,10 @@ public class MultiThreadScrapper {
         LinkedBlockingQueue<MangaPage> pgs = new LinkedBlockingQueue<>();
         int[] curr = new int[sct.size()];
         int tot = sct.stream().reduce(0, (o, i) -> o += i.getCompleteNumberOfPages(), Integer::sum);
-        for(int i = 0; i < tot; i++) {
+        for (int i = 0; i < tot; i++) {
             int in = i % curr.length;
             int x = curr[in];
-            if(x < sct.get(in).getCompleteNumberOfPages()){
+            if (x < sct.get(in).getCompleteNumberOfPages()) {
                 pgs.add(new MangaPage(x + 1, sct.get(in)));
                 curr[in]++;
             } else {
@@ -173,7 +174,20 @@ public class MultiThreadScrapper {
                         } finally {
                             if (mn != null) {
                                 mn.getChapters().forEach(f -> f.setWatchTime(System.currentTimeMillis()));
-                                mangaManager.insert(parse(mn));
+                                boolean f = true;
+                                while (f) {
+                                    try {
+                                        mangaManager.insert(parse(mn));
+                                        f = false;
+                                    } catch (CannotAcquireLockException ex) {
+                                        System.out.println(mn.getTitles() + " deadlocked");
+                                        try {
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
                                 System.out.println("Inserted " + mn.getPrimaryTitle());
                                 c.incrementAndGet();
                             }
@@ -182,6 +196,8 @@ public class MultiThreadScrapper {
                     System.out.println("Processed page: " + x);
                 } catch (PageProcessingException p) {
                     p.printStackTrace();
+                } catch (Exception ex) {
+                    //skip
                 }
             });
         }
@@ -377,9 +393,9 @@ public class MultiThreadScrapper {
         m.setDescription(rec.getDescription());
         m.setSource(rec.getSource());
         m.setListed(true);
-        m.setLastUpdated(Optional.ofNullable(rec.getLastUpdated()).map(t -> Timestamp.from(t)).orElse(null));
+        m.setLastUpdated(Optional.ofNullable(rec.getLastUpdated()).map(Timestamp::from).orElse(null));
         m.setStatus(rec.getStatus());
-        m.setGenres(rec.getGenres().stream().map(t -> genreManager.getGenre(t.toLowerCase())).toList());
+        m.setGenres(rec.getGenres().stream().map(t -> genreManager.getGenre(t == null ? null : t.toLowerCase())).toList());
         m.setAuthors(rec.getAuthors().stream().map(t -> authorManager.getAuthor(t.toLowerCase())).toList());
         m.setArtists(rec.getArtists().stream().map(t -> authorManager.getAuthor(t.toLowerCase())).toList());
         m.setChapters(rec.getChapters().stream().map(Chapter::new).toList());

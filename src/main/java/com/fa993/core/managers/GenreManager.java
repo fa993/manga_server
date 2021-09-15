@@ -1,13 +1,11 @@
 package com.fa993.core.managers;
 
+import com.fa993.core.dto.GenreData;
 import com.fa993.core.pojos.Genre;
 import com.fa993.core.repositories.GenreRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class GenreManager {
@@ -16,12 +14,47 @@ public class GenreManager {
 
     private Map<String, Genre> genres;
 
+    private List<GenreData> data;
+
     private Genre error;
+
+    private static class GenreDataImpl implements GenreData{
+
+        private String id;
+
+        private String name;
+
+        public GenreDataImpl(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 
     public GenreManager(GenreRepository repo) {
         this.repo = repo;
         this.genres = new HashMap<>();
-        this.repo.findAll().forEach(t -> genres.put(t.getName().toLowerCase(), t));
+        this.data = new ArrayList<>();
+        this.repo.findAll().forEach(t -> {
+            genres.put(t.getName().toLowerCase(), t);
+            data.add(new GenreDataImpl(t.getId(), t.getName()));
+        });
+        this.data.sort(Comparator.comparing(GenreData::getName));
         this.error = this.repo.findByName("not available");
     }
 
@@ -33,7 +66,7 @@ public class GenreManager {
     }
 
     public void addAll(List<String> toAdd) {
-        toAdd.forEach(t -> add(t));
+        toAdd.forEach(this::add);
     }
 
     public void add(String toAdd) {
@@ -44,7 +77,11 @@ public class GenreManager {
         });
     }
 
-    public void registerError(String error){
+    public List<GenreData> all() {
+        return this.data;
+    }
+
+    public void registerError(String error) {
         String lt = error.toLowerCase();
         Optional.ofNullable(repo.findByName(lt)).ifPresentOrElse(f -> this.error = f, () -> this.error = this.repo.save(new Genre(lt)));
     }

@@ -40,10 +40,10 @@ public class App implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         genreManager.registerError("not available");
-//      FirebaseApp.initializeApp(); //will test on compute
-//      MultiThreadScrapper scp = new MultiThreadScrapper(mangaManager, sourceManager, authorManager, genreManager, pageManager, titleManager, problemChildManager);
-//    	scp.prime();
-//      scp.watch();
-//    	scp.run();
+//      FirebaseApp.initializeApp(); //will test on compute engine
+        MultiThreadScrapper scp = new MultiThreadScrapper(mangaManager, sourceManager, authorManager, genreManager, pageManager, titleManager, problemChildManager);
+        scp.prime();
+//        scp.watch();
+        scp.run();
     }
 }

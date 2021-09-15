@@ -1,9 +1,5 @@
 package com.fa993.core.dto;
 
-import com.fa993.core.pojos.Author;
-import com.fa993.core.pojos.Genre;
-import com.fa993.core.pojos.Source;
-
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -21,15 +17,15 @@ public interface MainMangaData {
 
     public List<ChapterData> getChapters();
 
-    public List<Author> getAuthors();
+    public List<AuthorData> getAuthors();
 
-    public List<Author> getArtists();
+    public List<AuthorData> getArtists();
 
     public Timestamp getLastUpdated();
 
     public String getDescription();
 
-    public List<Genre> getGenres();
+    public List<GenreData> getGenres();
 
     public String getStatus();
 

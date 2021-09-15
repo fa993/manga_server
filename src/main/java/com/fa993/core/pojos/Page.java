@@ -1,5 +1,7 @@
 package com.fa993.core.pojos;
 
+import org.hibernate.annotations.ColumnTransformer;
+
 import javax.persistence.*;
 
 @Entity
@@ -18,6 +20,7 @@ public class Page {
     private Integer pageNumber;
 
     @Column(name = "url")
+//    @ColumnTransformer(forColumn = "url", read = "UNCOMPRESS(url)", write = "COMPRESS(?)")
     private String url;
 
     public Page() {

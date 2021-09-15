@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TitleRepository extends JpaRepository<Title, String> {
 
-    public Title findFirstByTitle(String title);
+    public Title findFirstByTitleIgnoreCase(String title);
 
 }

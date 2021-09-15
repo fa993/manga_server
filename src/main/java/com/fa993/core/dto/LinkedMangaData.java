@@ -1,7 +1,5 @@
 package com.fa993.core.dto;
 
-import com.fa993.core.pojos.*;
-
 import java.util.List;
 
 public interface LinkedMangaData {

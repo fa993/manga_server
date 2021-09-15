@@ -27,16 +27,18 @@ public class PageManager {
     @Autowired
     PageRepository repo;
 
-    @PersistenceContext
-    EntityManager manager;
+//    @PersistenceContext
+//    EntityManager manager;
 
     public List<PageURL> getByChapterId(String id) {
         return repo.findAllByChapterIdOrderByPageNumberAsc(id);
     }
 
     public ChapterPosition getPosition(String mangaId, Integer sequenceNumber) {
-        BigInteger x = (BigInteger) manager.createNativeQuery(COUNT_PAGES_BEFORE_CHAPTER).setParameter(MANGA_ID_PARAM, mangaId).setParameter(SEQUENCE_NUMBER_PARAM, sequenceNumber).getSingleResult();
-        BigInteger y = (BigInteger) manager.createNativeQuery(COUNT_PAGES_OF_MANGA).setParameter(MANGA_ID_PARAM, mangaId).getSingleResult();
+        BigInteger x = repo.getPositionOfPage(mangaId, sequenceNumber);
+        BigInteger y = repo.getCountOfPages(mangaId);
+//        BigInteger x = (BigInteger) manager.createNativeQuery(COUNT_PAGES_BEFORE_CHAPTER).setParameter(MANGA_ID_PARAM, mangaId).setParameter(SEQUENCE_NUMBER_PARAM, sequenceNumber).getSingleResult();
+//        BigInteger y = (BigInteger) manager.createNativeQuery(COUNT_PAGES_OF_MANGA).setParameter(MANGA_ID_PARAM, mangaId).getSingleResult();
         return new ChapterPosition(x, y);
     }
 

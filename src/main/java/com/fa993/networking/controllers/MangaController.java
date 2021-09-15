@@ -2,6 +2,7 @@ package com.fa993.networking.controllers;
 
 import com.fa993.core.dto.*;
 import com.fa993.core.exceptions.NoSuchMangaException;
+import com.fa993.core.managers.GenreManager;
 import com.fa993.core.managers.PageManager;
 import com.fa993.core.pojos.MangaQuery;
 import com.fa993.core.managers.MangaManager;
@@ -17,15 +18,27 @@ public class MangaController {
 
     public MangaManager mangaManager;
     public PageManager pageManager;
+    public GenreManager genreManager;
 
-    public MangaController(MangaManager repo1, PageManager repo2) {
+    public MangaController(MangaManager repo1, PageManager repo2, GenreManager repo3) {
         this.mangaManager = repo1;
         this.pageManager = repo2;
+        this.genreManager = repo3;
     }
 
     @GetMapping("/{id}")
     public CompleteManga getManga(@PathVariable(name = "id") String id) {
         return this.mangaManager.getById(id);
+    }
+
+    @GetMapping("/part/{id}")
+    public LinkedMangaData getPart(@PathVariable(name = "id") String id) {
+        return this.mangaManager.getPartById(id);
+    }
+
+    @GetMapping("/genres")
+    public List<GenreData> getAllGenres() {
+        return this.genreManager.all();
     }
 
     @GetMapping("/chapter/{id}")
