@@ -43,9 +43,13 @@ public interface SourceScrapper {
 
     public MangaDTO getManga(String url) throws MangaFetchingException;
 
+    public void reloadCompletePages();
+
     public Integer getCompleteNumberOfPages();
     
     public void getLiterallyEveryLink(int x, Consumer<String> onProcessed) throws PageProcessingException;
+
+    public void reloadWatchPages();
 
     public Integer getNumberOfPagesToWatch();
     

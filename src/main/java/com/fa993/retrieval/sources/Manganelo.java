@@ -1,11 +1,11 @@
-package com.fa993.web.sources;
+package com.fa993.retrieval.sources;
 
 import com.fa993.core.exceptions.MangaFetchingException;
 import com.fa993.core.exceptions.PageProcessingException;
 import com.fa993.core.managers.SourceManager;
 import com.fa993.core.pojos.Source;
-import com.fa993.retrieval.SourceScrapper;
 import com.fa993.retrieval.Scrapper;
+import com.fa993.retrieval.SourceScrapper;
 import com.fa993.retrieval.pojos.ChapterDTO;
 import com.fa993.retrieval.pojos.MangaDTO;
 import org.jsoup.Jsoup;
@@ -33,6 +33,8 @@ public class Manganelo implements SourceScrapper {
 	private static final String GENRES = "Genres :";
 	private static final String UPDATED = "Updated :";
 
+	private static final int NO_OF_PAGES_TO_WATCH = 1;
+
 	private static final DateTimeFormatter FMT = new DateTimeFormatterBuilder().appendPattern("MMM dd,yyyy - HH:mm")
 			.parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0).toFormatter().withZone(ZoneId.systemDefault());
 	private static final DateTimeFormatter FMTC = new DateTimeFormatterBuilder().appendPattern("MMM dd,yyyy HH:mm")
@@ -41,12 +43,12 @@ public class Manganelo implements SourceScrapper {
 	private static final String SEARCH_STRING = "https://manganelo.com/search/story/";
 	private static final String SEARCH_ALL = "https://manganelo.com/advanced_search?s=all&orby=az&page=";
 	private static final String ALL_GENRE = "https://manganelo.com/genre-all";
+	private static final String WATCH = "https://manganelo.com/";
 
-	private final Integer noOfPages;
+	private Integer completeNoOfPages;
 
 	public Manganelo(SourceManager m) {
 		s = m.getSource("manganelo", 2);
-		this.noOfPages = loadElement();
 	}
 
 	public List<MangaDTO> search(String key) {
@@ -54,7 +56,7 @@ public class Manganelo implements SourceScrapper {
 		try {
 			Document doc = Jsoup.connect(SEARCH_STRING + key).get();
 			for (Element f : doc.select("div.search-story-item > a.item-img")) {
-				MangaDTO mx = getManga(f.attr("href"));
+				MangaDTO mx = getManga(f.attr("abs:href"));
 				System.out.println("Done: " + mx.getPrimaryTitle());
 				mg.add(mx);
 			}
@@ -142,7 +144,7 @@ public class Manganelo implements SourceScrapper {
 				cdt.setSequenceNumber(ls.size() - i - 1);
 				Optional.ofNullable(t2.attr("title")).ifPresent(t -> cdt.setUpdatedAt(FMTC.parse(t, Instant::from)));
 				try {
-					cdt.setImagesURL(getImages(t1.attr("href"), url));
+					cdt.setImagesURL(getImages(t1.attr("abs:href"), url));
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					error = true;
@@ -164,10 +166,15 @@ public class Manganelo implements SourceScrapper {
 		return Jsoup.connect(url).get().select("div.container-chapter-reader > img").stream().map(t -> t.attr("src"))
 				.toList();
 	}
-	
+
+	@Override
+	public void reloadCompletePages() {
+		this.completeNoOfPages = loadElement();
+	}
+
 	@Override
 	public Integer getCompleteNumberOfPages() {
-		return this.noOfPages;
+		return this.completeNoOfPages;
 	}
 
 	@Override
@@ -175,21 +182,31 @@ public class Manganelo implements SourceScrapper {
 		try {
 			Document doc = Jsoup.connect(SEARCH_ALL + "/" + x).get();
 			for (Element t : doc.select("div.panel-content-genres > div.content-genres-item > a.genres-item-img")) {
-				onProcessed.accept(t.attr("href"));
+				onProcessed.accept(t.attr("abs:href"));
 			}
 		} catch (IOException e) {
 			throw new PageProcessingException(x, this.getSource(), e);
 		}
 	}
-	
+
 	@Override
-	public Integer getNumberOfPagesToWatch() {
-		return null;
+	public void reloadWatchPages() {
+		//DO NOTHING
 	}
 
 	@Override
-	public void watch(int x, Consumer<String> func) throws MangaFetchingException {
+	public Integer getNumberOfPagesToWatch() {
+		return NO_OF_PAGES_TO_WATCH;
+	}
 
+	@Override
+	public void watch(int x, Consumer<String> onProcessed) throws PageProcessingException {
+		try {
+			Document doc = Jsoup.connect(WATCH).get();
+			doc.select("div.content-homepage-item a").forEach(t -> onProcessed.accept(t.attr("abs:href")));
+		} catch (IOException e){
+			e.printStackTrace();
+		}
 	}
 
 	@Override

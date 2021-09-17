@@ -5,6 +5,7 @@ import com.fa993.core.exceptions.NoSuchMangaException;
 import com.fa993.core.pojos.Manga;
 import com.fa993.core.pojos.MangaQuery;
 import com.fa993.core.repositories.MangaRepository;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -93,10 +94,17 @@ public class MangaManager {
             repo.updateMainState(manga.getLinkedId());
         }
         repo.save(manga);
+        detachManagedObjects();
     }
 
     public void update(Manga manga) {
-        manager.merge(manga);
+        repo.save(manga);
+        detachManagedObjects();
+    }
+
+    void detachManagedObjects() {
+        manager.clear();
+        manager.getEntityManagerFactory().getCache().evictAll();
     }
 
     public void deleteAll() {

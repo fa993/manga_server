@@ -1,4 +1,4 @@
-package com.fa993.web;
+package com.fa993.retrieval.pojos;
 
 public enum WatchMode {
 	

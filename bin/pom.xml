@@ -181,7 +181,7 @@
             <!--                                        <goal>process</goal>-->
             <!--                                    </goals>-->
             <!--                                    <configuration>-->
-            <!--                                        <outputDirectory>target/generated-com.fa993.web.sources/java</outputDirectory>-->
+            <!--                                        <outputDirectory>target/generated-com.fa993.retrieval.web.sources/java</outputDirectory>-->
             <!--                                        <processor>com.querydsl.query.apt.jdo.JDOAnnotationProcessor</processor>-->
             <!--                                    </configuration>-->
             <!--                                </execution>-->
@@ -195,12 +195,12 @@
             <!--                </dependencies>-->
             <!--                <executions>-->
             <!--                    <execution>-->
-            <!--                        <phase>generate-com.fa993.web.sources</phase>-->
+            <!--                        <phase>generate-com.fa993.retrieval.web.sources</phase>-->
             <!--                        <goals>-->
             <!--                            <goal>process</goal>-->
             <!--                        </goals>-->
             <!--                        <configuration>-->
-            <!--                            <outputDirectory>${project.build.directory}/generated-com.fa993.web.sources/java/</outputDirectory>-->
+            <!--                            <outputDirectory>${project.build.directory}/generated-com.fa993.retrieval.web.sources/java/</outputDirectory>-->
             <!--                            <processors>-->
             <!--&lt;!&ndash;                                <processor>com.querydsl.apt.QuerydslAnnotationProcessor</processor>&ndash;&gt;-->
             <!--&lt;!&ndash;                                <processor>com.querydsl.apt.hibernate.HibernateAnnotationProcessor</processor>&ndash;&gt;-->

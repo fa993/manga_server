@@ -1,4 +1,4 @@
-package com.fa993.web.sources;
+package com.fa993.retrieval.sources;
 
 import com.fa993.core.exceptions.MangaFetchingException;
 import com.fa993.core.exceptions.PageProcessingException;
@@ -28,12 +28,17 @@ public class ReadM implements SourceScrapper {
 
     private static final String SEARCH_ALL = WEBSITE_HOST + "/manga-list";
     private static final String ALL_GENRE = WEBSITE_HOST + "/advanced-search";
+
+    private static final String WATCH = WEBSITE_HOST + "/latest-releases";
+
     private static final Integer TOTAL_PAGES = 27;
 
     private static final DateTimeFormatter DTF = new DateTimeFormatterBuilder().appendPattern("dd MMMM yyyy")
             .parseDefaulting(ChronoField.NANO_OF_DAY, 0).toFormatter().withZone(ZoneId.systemDefault());
 
     private final Source s;
+
+    private Integer noOfPagesToWatch;
 
     public ReadM(SourceManager manager) {
         this.s = manager.getSource("readm", 1);
@@ -114,6 +119,11 @@ public class ReadM implements SourceScrapper {
     }
 
     @Override
+    public void reloadCompletePages() {
+        //DO NOTHING
+    }
+
+    @Override
     public Integer getCompleteNumberOfPages() {
         return TOTAL_PAGES;
     }
@@ -129,14 +139,23 @@ public class ReadM implements SourceScrapper {
     }
 
     @Override
+    public void reloadWatchPages() {
+        this.noOfPagesToWatch = loadElement();
+    }
+
+    @Override
     public Integer getNumberOfPagesToWatch() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.noOfPagesToWatch;
     }
 
     @Override
     public void watch(int x, Consumer<String> onProcessed) throws PageProcessingException {
-
+        try{
+            Document doc = Jsoup.connect(WATCH + "/" + x).get();
+            doc.select("div.poster-subject a").forEach(t -> onProcessed.accept(t.attr("abs:href")));
+        }catch (IOException ex){
+            throw new PageProcessingException(x, this.getSource(), ex);
+        }
     }
 
     @Override
@@ -159,6 +178,17 @@ public class ReadM implements SourceScrapper {
             e.printStackTrace();
         }
         return ls;
+    }
+
+    private Integer loadElement() {
+        Integer ret = null;
+        try {
+            Document doc = Jsoup.connect(WATCH).get();
+            ret = Integer.parseInt(doc.select("div.pagination a").last().attr("href").substring(17));
+        } catch (IOException ex){
+            ex.printStackTrace();
+        }
+        return ret;
     }
 
 }
