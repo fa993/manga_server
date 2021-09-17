@@ -1,6 +1,5 @@
 package com.fa993;
 
-import com.fa993.core.managers.*;
 import com.fa993.retrieval.MultiThreadScrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -13,26 +12,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 public class App implements ApplicationRunner {
 
-    @Autowired
-    MangaManager mangaManager;
 
     @Autowired
-    SourceManager sourceManager;
-
-    @Autowired
-    AuthorManager authorManager;
-
-    @Autowired
-    GenreManager genreManager;
-
-    @Autowired
-    PageManager pageManager;
-
-    @Autowired
-    TitleManager titleManager;
-
-    @Autowired
-    ProblemChildManager problemChildManager;
+    private MultiThreadScrapper scp;
 
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
@@ -40,10 +22,7 @@ public class App implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        genreManager.registerError("not available");
-//      FirebaseApp.initializeApp(); //will test on compute engine
-//        MultiThreadScrapper scp = new MultiThreadScrapper(mangaManager, sourceManager, authorManager, genreManager, pageManager, titleManager, problemChildManager);
-//        scp.prime();
+//        FirebaseApp.initializeApp(); //will test on compute engine
 //        scp.run();
     }
 }

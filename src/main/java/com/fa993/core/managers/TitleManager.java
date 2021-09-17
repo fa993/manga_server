@@ -1,36 +1,41 @@
 package com.fa993.core.managers;
 
-import com.fa993.core.pojos.Source;
 import com.fa993.core.pojos.Title;
 import com.fa993.core.repositories.TitleRepository;
 import com.fa993.utils.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 @Transactional
 public class TitleManager {
 
-    @Autowired
     TitleRepository repo;
 
-    @PersistenceContext
-    EntityManager manager;
+    private Map<String, String> allTitles;
 
-    public Title getTitle(String title) {
-        return Optional.ofNullable(repo.findFirstByTitleIgnoreCase(title)).orElseGet(() -> repo.save(new Title(title)));
+    public TitleManager(TitleRepository repo) {
+        this.repo = repo;
+        this.allTitles = new HashMap<>();
+        repo.findAll().forEach(t -> allTitles.put(t.getTitle().toUpperCase(), t.getLinkedId()));
     }
 
-    public String add(List<String> titles, Source c) {
+    public void insertTitle(String title, String linkedId) {
+        allTitles.computeIfAbsent(title.toUpperCase(), k -> {
+            repo.save(new Title(title, linkedId));
+            return linkedId;
+        });
+    }
+
+    public String add(List<String> titles) {
         String ret = null;
         for (String x : titles) {
-            ret = Optional.ofNullable(repo.findFirstByTitleIgnoreCase(x)).map(Title::getLinkedId).orElse(null);
+            ret = this.allTitles.get(x.toUpperCase());
             if (ret != null) {
                 break;
             }
@@ -39,7 +44,7 @@ public class TitleManager {
             ret = Utility.getID();
         }
         String finalRet = ret;
-        titles.forEach(t -> manager.persist(new Title(t, finalRet)));
+        titles.forEach(t -> this.insertTitle(t, finalRet));
         return ret;
     }
 

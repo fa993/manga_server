@@ -1,9 +1,6 @@
 package com.fa993.core.repositories;
 
-import com.fa993.core.dto.LinkedMangaData;
-import com.fa993.core.dto.MainMangaData;
-import com.fa993.core.dto.MangaHeading;
-import com.fa993.core.dto.MangaPriority;
+import com.fa993.core.dto.*;
 import com.fa993.core.pojos.Manga;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,15 +13,17 @@ public interface MangaRepository extends JpaRepository<Manga, String> {
 
 	public boolean existsByUrl(String url);
 
+	public MangaID findByUrl(String url);
+
 	public List<LinkedMangaData> findAllByLinkedIdAndIdNot(String linkedId, String mangaId);
 
 	public MainMangaData getById(String id);
 
 	public LinkedMangaData readById(String id);
 
-	public Manga findByUrl(String url);
-
 	public List<MangaPriority> findAllByLinkedId(String linkedId);
+
+	public List<MangaPriority> getAllBy();
 
 	@Modifying
 	@Query(

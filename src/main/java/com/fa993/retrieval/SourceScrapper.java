@@ -47,13 +47,13 @@ public interface SourceScrapper {
 
     public Integer getCompleteNumberOfPages();
     
-    public void getLiterallyEveryLink(int x, Consumer<String> onProcessed) throws PageProcessingException;
+    public List<String> getLiterallyEveryLink(int x) throws PageProcessingException;
 
     public void reloadWatchPages();
 
     public Integer getNumberOfPagesToWatch();
     
-    public void watch(int x, Consumer<String> onProcessed) throws PageProcessingException;
+    public List<String> watch(int x) throws PageProcessingException;
 
     public Source getSource();
 

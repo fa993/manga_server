@@ -178,12 +178,10 @@ public class Manganelo implements SourceScrapper {
 	}
 
 	@Override
-	public void getLiterallyEveryLink(int x, Consumer<String> onProcessed) throws PageProcessingException {
+	public List<String> getLiterallyEveryLink(int x) throws PageProcessingException {
 		try {
 			Document doc = Jsoup.connect(SEARCH_ALL + "/" + x).get();
-			for (Element t : doc.select("div.panel-content-genres > div.content-genres-item > a.genres-item-img")) {
-				onProcessed.accept(t.attr("abs:href"));
-			}
+			return doc.select("a.genres-item-name").stream().map(t -> t.attr("abs:href")).toList();
 		} catch (IOException e) {
 			throw new PageProcessingException(x, this.getSource(), e);
 		}
@@ -200,12 +198,12 @@ public class Manganelo implements SourceScrapper {
 	}
 
 	@Override
-	public void watch(int x, Consumer<String> onProcessed) throws PageProcessingException {
+	public List<String> watch(int x) throws PageProcessingException {
 		try {
 			Document doc = Jsoup.connect(WATCH).get();
-			doc.select("div.content-homepage-item a").forEach(t -> onProcessed.accept(t.attr("abs:href")));
+			return doc.select("h3.item-title > a").stream().map(t -> t.attr("abs:href")).toList();
 		} catch (IOException e){
-			e.printStackTrace();
+			throw new PageProcessingException(x, this.getSource(), e);
 		}
 	}
 

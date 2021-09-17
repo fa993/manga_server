@@ -4,6 +4,7 @@ import com.fa993.utils.Utility;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "source")
@@ -61,6 +62,19 @@ public class Source {
         if(this.id == null) {
             this.id = Utility.getID();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Source source = (Source) o;
+        return getId().equals(source.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 
     @Override

@@ -4,16 +4,17 @@ import com.fa993.core.dto.*;
 import com.fa993.core.exceptions.NoSuchMangaException;
 import com.fa993.core.pojos.Manga;
 import com.fa993.core.pojos.MangaQuery;
+import com.fa993.core.pojos.Source;
 import com.fa993.core.repositories.MangaRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Priority;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -34,13 +35,21 @@ public class MangaManager {
     private static final String ID_PARAM = "query3";
     private static final String GENRE_PARAM = "query4";
 
-    @Autowired
+
     MangaRepository repo;
 
     @PersistenceContext
     EntityManager manager;
 
-    public MangaManager() {
+    private Map<String, Set<Integer>> priorities;
+
+    public MangaManager(MangaRepository repo) {
+        this.repo = repo;
+        this.priorities = new HashMap<>();
+        this.repo.getAllBy().forEach(t -> {
+            this.priorities.putIfAbsent(t.getLinkedId(), new HashSet<>());
+            this.priorities.get(t.getLinkedId()).add(t.getSource().getPriority());
+        });
     }
 
     public List<MangaHeading> findAllByQuery(MangaQuery query) {
@@ -65,44 +74,54 @@ public class MangaManager {
         return repo.existsByUrl(url);
     }
 
-    public Manga getMangaByURL(String url) {
-        return repo.findByUrl(url);
+    public String getId(String url) {
+        MangaID id = repo.findByUrl(url);
+        return id == null ? null : id.getId();
     }
 
-
-    public void insert(Manga manga) {
-        List<MangaPriority> pri = repo.findAllByLinkedId(manga.getLinkedId());
-        Boolean ret = pri.stream().reduce(true, (r, e) -> {
-            if (r == null) {
-                return r;
-            }
-            int x = manga.getSource().getPriority() - e.getSource().getPriority();
-            if (x == 0) {
-                return null;
-            }
-            return x < 0 && r;
-        }, (l, r) -> {
-            if (l == null || r == null) {
-                return null;
-            } else {
-                return l && r;
-            }
-        });
-        manga.setMain(ret);
-        if (ret != null && ret) {
-            //TODO sometimes deadlock occurs here
-            repo.updateMainState(manga.getLinkedId());
+    public Boolean isPrimary(String linkedId, Integer priority) {
+        this.priorities.putIfAbsent(linkedId, new HashSet<>());
+        Set<Integer> mps = this.priorities.get(linkedId);
+        if (mps.isEmpty()) {
+            mps.add(priority);
+            return true;
+        } else {
+            Boolean ret = mps.stream().reduce(true, (r, e) -> {
+                if (r == null) {
+                    return r;
+                }
+                int x = priority - e;
+                if (x == 0) {
+                    return null;
+                }
+                return x < 0 && r;
+            }, (l, r) -> {
+                if (l == null || r == null) {
+                    return null;
+                } else {
+                    return l && r;
+                }
+            });
+            mps.add(priority);
+            return ret;
         }
-        repo.save(manga);
-        detachManagedObjects();
     }
 
-    public void update(Manga manga) {
-        repo.save(manga);
+    public Manga insert(boolean firstTime, Manga manga) {
+        if (firstTime) {
+            Boolean ret = isPrimary(manga.getLinkedId(), manga.getSource().getPriority());
+            manga.setMain(ret);
+            if (ret != null && ret) {
+                //TODO sometimes deadlock occurs here
+                repo.updateMainState(manga.getLinkedId());
+            }
+        }
+        Manga m = repo.saveAndFlush(manga);
         detachManagedObjects();
+        return m;
     }
 
-    void detachManagedObjects() {
+    public void detachManagedObjects() {
         manager.clear();
         manager.getEntityManagerFactory().getCache().evictAll();
     }

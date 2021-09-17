@@ -129,10 +129,10 @@ public class ReadM implements SourceScrapper {
     }
 
     @Override
-    public void getLiterallyEveryLink(int x, Consumer<String> onProcessed) throws PageProcessingException {
+    public List<String> getLiterallyEveryLink(int x) throws PageProcessingException {
         try {
             Document doc = Jsoup.connect(SEARCH_ALL + "/" + ((x == 1) ? "" : (char) (x + 95))).get();
-            doc.select("div.poster-xs").forEach(t -> onProcessed.accept(t.selectFirst("a").attr("abs:href")));
+            return doc.select("div.poster-xs > a").stream().map(t -> t.attr("abs:href")).toList();
         } catch (IOException e) {
             throw new PageProcessingException(x, this.getSource(), e);
         }
@@ -149,10 +149,10 @@ public class ReadM implements SourceScrapper {
     }
 
     @Override
-    public void watch(int x, Consumer<String> onProcessed) throws PageProcessingException {
+    public List<String> watch(int x) throws PageProcessingException {
         try{
             Document doc = Jsoup.connect(WATCH + "/" + x).get();
-            doc.select("div.poster-subject a").forEach(t -> onProcessed.accept(t.attr("abs:href")));
+            return doc.select("h2.truncate > a").stream().map(t -> t.attr("abs:href")).toList();
         }catch (IOException ex){
             throw new PageProcessingException(x, this.getSource(), ex);
         }

@@ -6,8 +6,10 @@ public interface MangaPriority {
 
     public String getId();
 
+    public String getLinkedId();
+
     public Source getSource();
 
-    public boolean getMain();
+    public Boolean getMain();
 
 }
