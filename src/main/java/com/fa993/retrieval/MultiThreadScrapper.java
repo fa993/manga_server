@@ -42,6 +42,8 @@ public class MultiThreadScrapper {
     private final ProblemChildManager problemChildManager;
 
     private byte watchCount = 1;
+    
+    private volatile boolean running;
 
     public MultiThreadScrapper(MangaManager mangaManager, SourceManager sourceManager, AuthorManager authorManager,
                                GenreManager genreManager, PageManager pageManager, TitleManager titleManager,
@@ -82,6 +84,8 @@ public class MultiThreadScrapper {
 
     public void run() throws InterruptedException {
 
+        this.running = true;
+        
         ThreadPoolExecutor pageExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(runThreads, r -> {
             Thread t = new Thread(r);
             t.setDaemon(true);
@@ -152,6 +156,10 @@ public class MultiThreadScrapper {
                 tot++;
             }
         }
+        
+        mangaExecutor.shutdown();
+        mangaExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        this.running = false;
     }
 
     private void parseAndInsert(AtomicInteger c, String t, SourceScrapper sc) {
@@ -197,6 +205,11 @@ public class MultiThreadScrapper {
 
     @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void watch() throws InterruptedException, ExecutionException {
+
+        if(this.running) {
+            System.out.println("Currently Running so aborting watch");
+            return;
+        }
 
         ThreadPoolExecutor pageExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(watchThreads, r -> {
             Thread t = new Thread(r);
