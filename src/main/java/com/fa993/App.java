@@ -23,6 +23,6 @@ public class App implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 //        FirebaseApp.initializeApp(); //will test on compute engine
-//        scp.run();
+        scp.run();
     }
 }

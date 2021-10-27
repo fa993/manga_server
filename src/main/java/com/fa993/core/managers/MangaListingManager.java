@@ -31,7 +31,7 @@ public class MangaListingManager {
     }
 
     public List<MangaHeading> getHome(MangaQuery query) {
-        return (query.getGenreIds().isEmpty() ? repo.getHomePage(query.getOffset(), query.getLimit()) : repo.getHomePage(query.getGenreIds(), query.getGenreIds().size(), query.getOffset(), query.getLimit()));
+        return (query.getGenreIds() == null || query.getGenreIds().isEmpty() ? repo.getHomePage(query.getOffset(), query.getLimit()) : repo.getHomePage(query.getGenreIds(), query.getGenreIds().size(), query.getOffset(), query.getLimit()));
     }
 
     public MangaListing save(MangaListing ls) {

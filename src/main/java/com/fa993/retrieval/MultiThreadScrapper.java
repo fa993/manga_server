@@ -156,7 +156,8 @@ public class MultiThreadScrapper {
                 tot++;
             }
         }
-        
+        pageExecutor.shutdown();
+        pageExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
         mangaExecutor.shutdown();
         mangaExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
         this.running = false;
@@ -203,7 +204,7 @@ public class MultiThreadScrapper {
         }
     }
 
-    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    @Scheduled(initialDelay = 5 * 60 * 1000,fixedDelay = 5 * 60 * 1000)
     public void watch() throws InterruptedException, ExecutionException {
 
         if(this.running) {

@@ -8,7 +8,7 @@ public class MangaListing {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "manga_listing_id")
     private Integer id;
 
