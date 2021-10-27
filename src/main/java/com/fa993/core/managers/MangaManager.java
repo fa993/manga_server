@@ -10,6 +10,7 @@ import com.fa993.core.repositories.MangaRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Priority;
 import javax.persistence.EntityManager;
@@ -55,14 +56,6 @@ public class MangaManager {
             this.priorities.putIfAbsent(t.getLinkedId(), new HashSet<>());
             this.priorities.get(t.getLinkedId()).add(t.getSource().getPriority());
         });
-    }
-
-    public List<MangaHeading> findAllByQuery(MangaQuery query) {
-        return (query.getPreferredSourceId() == null ? repo.findIdsWithoutSource("%" + query.getName() + "%", query.getOffset(), query.getLimit()) : repo.findIdsWithSource("%" + query.getName() + "%", query.getPreferredSourceId(), query.getOffset(), query.getLimit())).stream().map(t -> repo.fetchHeading(t)).toList();
-    }
-
-    public List<MangaHeading> getHome(MangaQuery query) {
-        return (query.getGenreIds().isEmpty() ? repo.getHomePage(query.getOffset(), query.getLimit()) : repo.getHomePage(query.getGenreIds(), query.getGenreIds().size(), query.getOffset(), query.getLimit())).stream().map(t -> repo.fetchHeading(t)).toList();
     }
 
     public CompleteManga getById(String id) {
@@ -126,8 +119,10 @@ public class MangaManager {
         ls.setName(m.getName());
         ls.setCoverURL(m.getCoverURL());
         ls.setDescriptionSmall(m.getDescription().substring(0, Math.min(m.getDescription().length(), 255)));
-//        ls.setGenres(m.getGenres().stream().collec);
-        listingManager.repo.saveAndFlush(ls);
+        StringBuilder sb1 = m.getGenres().stream().collect(StringBuilder::new, (sb, g) -> sb.append(StringUtils.capitalize(g.getName())).append(','), StringBuilder::append);
+        sb1.deleteCharAt(sb1.length() - 1);
+        ls.setGenres(sb1.toString());
+        listingManager.save(ls);
         detachManagedObjects();
         return m;
     }

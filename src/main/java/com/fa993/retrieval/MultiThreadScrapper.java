@@ -363,7 +363,7 @@ public class MultiThreadScrapper {
         m.setName(rec.getPrimaryTitle());
         m.setUrl(rec.getURL());
         m.setCoverURL(rec.getCoverURL());
-        m.setDescriptionSmall(rec.getDescription().substring(0, Math.min(rec.getDescription().length(), 255)));
+//        m.setDescriptionSmall(rec.getDescription().substring(0, Math.min(rec.getDescription().length(), 255)));
         m.setDescription(rec.getDescription());
         m.setSource(rec.getSource());
         m.setListed(true);
