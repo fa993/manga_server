@@ -3,6 +3,7 @@ package com.fa993.core.managers;
 import com.fa993.core.dto.*;
 import com.fa993.core.exceptions.NoSuchMangaException;
 import com.fa993.core.pojos.Manga;
+import com.fa993.core.pojos.MangaListing;
 import com.fa993.core.pojos.MangaQuery;
 import com.fa993.core.pojos.Source;
 import com.fa993.core.repositories.MangaRepository;
@@ -15,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,13 +40,16 @@ public class MangaManager {
 
     MangaRepository repo;
 
+    MangaListingManager listingManager;
+
     @PersistenceContext
     EntityManager manager;
 
     private Map<String, Set<Integer>> priorities;
 
-    public MangaManager(MangaRepository repo) {
+    public MangaManager(MangaRepository repo, MangaListingManager manager1) {
         this.repo = repo;
+        this.listingManager = manager1;
         this.priorities = new HashMap<>();
         this.repo.getAllBy().forEach(t -> {
             this.priorities.putIfAbsent(t.getLinkedId(), new HashSet<>());
@@ -117,6 +122,12 @@ public class MangaManager {
             }
         }
         Manga m = repo.saveAndFlush(manga);
+        MangaListing ls = listingManager.getByMangaId(m.getId());
+        ls.setName(m.getName());
+        ls.setCoverURL(m.getCoverURL());
+        ls.setDescriptionSmall(m.getDescription().substring(0, Math.min(m.getDescription().length(), 255)));
+//        ls.setGenres(m.getGenres().stream().collec);
+        listingManager.repo.saveAndFlush(ls);
         detachManagedObjects();
         return m;
     }

@@ -345,37 +345,69 @@
     </index>
    </folder>
   </table>
+  <table id="TAB91" populated="true" UUID="e29b803c-c62c-48c1-beb2-ce2e89bd878d" name="manga_listing" objectType="TABLE" physicalName="manga_listing" >
+   <remarks></remarks>
+   <folder id="FOLTAB911" populated="true" name="Columns" physicalName="Columns" type="1">
+    <column id="COL92" populated="true" UUID="65e9253f-cd13-43d0-a2b2-e9f5cb12d8fc" autoIncrement="true" autoIncrementSequenceName="manga_listing_manga_listing_id_seq" defaultValue="" name="manga_listing_id" nullable="0" physicalName="manga_listing_id" precision="0" primaryKeySeq="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="4" userDefinedTypeUUID="63b011c7-c81f-4c75-8271-632b3c87f727" >
+     <remarks></remarks>
+    </column>
+    <column id="COL93" populated="true" UUID="d8777abd-7eac-43f6-be8c-87bccb8cfb91" autoIncrement="false" autoIncrementSequenceName="manga_listing_manga_id_seq" defaultValue="" name="manga_id" nullable="0" physicalName="manga_id" precision="255" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
+     <remarks></remarks>
+    </column>
+    <column id="COL94" populated="true" UUID="8ec49c73-6cae-44c1-969a-92f5c0c4a6b3" autoIncrement="false" autoIncrementSequenceName="manga_listing_cover_url_seq" defaultValue="" name="cover_url" nullable="0" physicalName="cover_url" precision="2048" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
+     <remarks></remarks>
+    </column>
+    <column id="COL95" populated="true" UUID="84ddcb68-b722-4948-9d27-e163f1371ab7" autoIncrement="false" autoIncrementSequenceName="manga_listing_name_seq" defaultValue="" name="name" nullable="0" physicalName="name" precision="255" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
+     <remarks></remarks>
+    </column>
+    <column id="COL96" populated="true" UUID="b1bb8317-5d08-4061-ab20-3a8c8dbafd88" autoIncrement="false" autoIncrementSequenceName="manga_listing_genres_seq" defaultValue="" name="genres" nullable="0" physicalName="genres" precision="255" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
+     <remarks></remarks>
+    </column>
+    <column id="COL97" populated="true" UUID="17487e08-671c-48e9-a147-01daaf9bcc72" autoIncrement="false" autoIncrementSequenceName="manga_listing_description_small_seq" defaultValue="" name="description_small" nullable="0" physicalName="description_small" precision="255" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
+     <remarks></remarks>
+    </column>
+    </folder>
+    <folder id="FOLTAB913" populated="true" name="Exported Keys" physicalName="Exported Keys" type="3">
+    </folder>
+    <folder id="FOLTAB912" populated="true" name="Imported Keys" physicalName="Imported Keys" type="2">
+    </folder>
+    <folder id="FOLTAB914" populated="true" name="Indices" physicalName="Indices" type="4">
+    <index id="IDX98" populated="true" UUID="eea0fd50-845e-4ac2-9b4c-9c0d29b591e8" clustered="false" name="manga_listing_pk" physicalName="manga_listing_pk" primaryKeyIndex="true" unique="false" >
+     <index-column id="IDC99" populated="true" UUID="e3bba999-f26f-4e7d-97c4-6701275112c1" ascendingOrDescending="UNSPECIFIED" column-ref="COL92" name="manga_listing_id" physicalName="manga_listing_id" />
+    </index>
+   </folder>
+  </table>
   <relationships>
-   <relationship id="REL91" populated="true" UUID="aff94a2b-beed-4b1d-ab26-1f22b7350d6c" deferrability="7" deleteRule="3" fk-table-ref="TAB38" fkCardinality="7" identifying="false" name="manga_chapter_fk" physicalName="manga_chapter_fk" pk-table-ref="TAB7" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP92" populated="true" UUID="6cb97155-72a0-4180-8b48-73a00711ec73" fk-column-ref="COL43" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL8" />
+   <relationship id="REL100" populated="true" UUID="aff94a2b-beed-4b1d-ab26-1f22b7350d6c" deferrability="7" deleteRule="3" fk-table-ref="TAB38" fkCardinality="7" identifying="false" name="manga_chapter_fk" physicalName="manga_chapter_fk" pk-table-ref="TAB7" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP101" populated="true" UUID="6cb97155-72a0-4180-8b48-73a00711ec73" fk-column-ref="COL43" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL8" />
    </relationship>
-   <relationship id="REL93" populated="true" UUID="5a683754-a383-4507-8894-c55f9148ee67" deferrability="7" deleteRule="3" fk-table-ref="TAB55" fkCardinality="7" identifying="false" name="manga_manga_genre_fk" physicalName="manga_manga_genre_fk" pk-table-ref="TAB7" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP94" populated="true" UUID="61a48df2-c618-476c-864b-e116cd00e121" fk-column-ref="COL58" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL8" />
+   <relationship id="REL102" populated="true" UUID="5a683754-a383-4507-8894-c55f9148ee67" deferrability="7" deleteRule="3" fk-table-ref="TAB55" fkCardinality="7" identifying="false" name="manga_manga_genre_fk" physicalName="manga_manga_genre_fk" pk-table-ref="TAB7" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP103" populated="true" UUID="61a48df2-c618-476c-864b-e116cd00e121" fk-column-ref="COL58" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL8" />
    </relationship>
-   <relationship id="REL95" populated="true" UUID="2d625fef-69c6-4930-a5e3-d454ea16819b" deferrability="7" deleteRule="3" fk-table-ref="TAB61" fkCardinality="7" identifying="false" name="manga_author_genre_fk" physicalName="manga_author_genre_fk" pk-table-ref="TAB7" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP96" populated="true" UUID="711c7d3c-aeed-48b8-893c-b80967c94967" fk-column-ref="COL64" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL8" />
+   <relationship id="REL104" populated="true" UUID="2d625fef-69c6-4930-a5e3-d454ea16819b" deferrability="7" deleteRule="3" fk-table-ref="TAB61" fkCardinality="7" identifying="false" name="manga_author_genre_fk" physicalName="manga_author_genre_fk" pk-table-ref="TAB7" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP105" populated="true" UUID="711c7d3c-aeed-48b8-893c-b80967c94967" fk-column-ref="COL64" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL8" />
    </relationship>
-   <relationship id="REL97" populated="true" UUID="73863be5-4b48-4911-b2ff-f3d9040138b8" deferrability="7" deleteRule="3" fk-table-ref="TAB73" fkCardinality="7" identifying="false" name="manga_manga_artist_fk" physicalName="manga_manga_artist_fk" pk-table-ref="TAB7" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP98" populated="true" UUID="d66eeb0d-4e6d-4f8d-bb37-24d6617c30f0" fk-column-ref="COL75" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL8" />
+   <relationship id="REL106" populated="true" UUID="73863be5-4b48-4911-b2ff-f3d9040138b8" deferrability="7" deleteRule="3" fk-table-ref="TAB73" fkCardinality="7" identifying="false" name="manga_manga_artist_fk" physicalName="manga_manga_artist_fk" pk-table-ref="TAB7" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP107" populated="true" UUID="d66eeb0d-4e6d-4f8d-bb37-24d6617c30f0" fk-column-ref="COL75" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL8" />
    </relationship>
-   <relationship id="REL99" populated="true" UUID="17329a55-5ab6-4dd8-8a9c-e54e13b14c06" deferrability="7" deleteRule="3" fk-table-ref="TAB7" fkCardinality="7" identifying="false" name="source_manga_fk" physicalName="source_manga_fk" pk-table-ref="TAB22" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP100" populated="true" UUID="5216b283-e9ab-41e9-8810-4d2be439301e" fk-column-ref="COL19" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL23" />
+   <relationship id="REL108" populated="true" UUID="17329a55-5ab6-4dd8-8a9c-e54e13b14c06" deferrability="7" deleteRule="3" fk-table-ref="TAB7" fkCardinality="7" identifying="false" name="source_manga_fk" physicalName="source_manga_fk" pk-table-ref="TAB22" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP109" populated="true" UUID="5216b283-e9ab-41e9-8810-4d2be439301e" fk-column-ref="COL19" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL23" />
    </relationship>
-   <relationship id="REL101" populated="true" UUID="f41dd2f3-84f3-4f7f-9a6f-dbe2be6f885c" deferrability="7" deleteRule="3" fk-table-ref="TAB61" fkCardinality="7" identifying="false" name="author_author_genre_fk" physicalName="author_author_genre_fk" pk-table-ref="TAB28" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP102" populated="true" UUID="74477343-0b6e-44ad-bf15-11c3ec157604" fk-column-ref="COL63" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL29" />
+   <relationship id="REL110" populated="true" UUID="f41dd2f3-84f3-4f7f-9a6f-dbe2be6f885c" deferrability="7" deleteRule="3" fk-table-ref="TAB61" fkCardinality="7" identifying="false" name="author_author_genre_fk" physicalName="author_author_genre_fk" pk-table-ref="TAB28" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP111" populated="true" UUID="74477343-0b6e-44ad-bf15-11c3ec157604" fk-column-ref="COL63" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL29" />
    </relationship>
-   <relationship id="REL103" populated="true" UUID="fe71f8e6-c382-4d25-90bc-4a668580f060" deferrability="7" deleteRule="3" fk-table-ref="TAB73" fkCardinality="7" identifying="false" name="author_manga_artist_fk" physicalName="author_manga_artist_fk" pk-table-ref="TAB28" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP104" populated="true" UUID="3e6494f5-849d-4d76-a2f8-eec350f63024" fk-column-ref="COL76" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL29" />
+   <relationship id="REL112" populated="true" UUID="fe71f8e6-c382-4d25-90bc-4a668580f060" deferrability="7" deleteRule="3" fk-table-ref="TAB73" fkCardinality="7" identifying="false" name="author_manga_artist_fk" physicalName="author_manga_artist_fk" pk-table-ref="TAB28" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP113" populated="true" UUID="3e6494f5-849d-4d76-a2f8-eec350f63024" fk-column-ref="COL76" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL29" />
    </relationship>
-   <relationship id="REL105" populated="true" UUID="bdf1be0b-9673-4e9d-b340-51ac52fd2e02" deferrability="7" deleteRule="3" fk-table-ref="TAB55" fkCardinality="7" identifying="false" name="genre_manga_genre_fk" physicalName="genre_manga_genre_fk" pk-table-ref="TAB33" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP106" populated="true" UUID="04e71e8c-2ba7-4651-a030-0ed9a3e95996" fk-column-ref="COL57" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL34" />
+   <relationship id="REL114" populated="true" UUID="bdf1be0b-9673-4e9d-b340-51ac52fd2e02" deferrability="7" deleteRule="3" fk-table-ref="TAB55" fkCardinality="7" identifying="false" name="genre_manga_genre_fk" physicalName="genre_manga_genre_fk" pk-table-ref="TAB33" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP115" populated="true" UUID="04e71e8c-2ba7-4651-a030-0ed9a3e95996" fk-column-ref="COL57" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL34" />
    </relationship>
-   <relationship id="REL107" populated="true" UUID="392cd0d6-a0cf-4adb-9479-a51574530293" deferrability="7" deleteRule="3" fk-table-ref="TAB48" fkCardinality="7" identifying="false" name="chapter_chapter_page_fk" physicalName="chapter_chapter_page_fk" pk-table-ref="TAB38" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP108" populated="true" UUID="e1189cec-425e-4578-839c-d04177c95088" fk-column-ref="COL52" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL39" />
+   <relationship id="REL116" populated="true" UUID="392cd0d6-a0cf-4adb-9479-a51574530293" deferrability="7" deleteRule="3" fk-table-ref="TAB48" fkCardinality="7" identifying="false" name="chapter_chapter_page_fk" physicalName="chapter_chapter_page_fk" pk-table-ref="TAB38" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP117" populated="true" UUID="e1189cec-425e-4578-839c-d04177c95088" fk-column-ref="COL52" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL39" />
    </relationship>
   </relationships>
  </target-database>
- <ddl-generator type="ca.sqlpower.architect.ddl.MySqlDDLGenerator" allow-connection="false"> </ddl-generator>
+ <ddl-generator type="ca.sqlpower.architect.ddl.MySqlDDLGenerator" allow-connection="true"> </ddl-generator>
  <liquibase-settings useSeparateChangeSets="false" generateId="false" idStart="1"/>
  <create-kettle-job-settings filePath="" jobName="" schemaName="" kettleJoinType="0" savingToFile="true" />
  <play-pen zoom="1.0" viewportX="0" viewportY="0" relationship-style="rectilinear" names-displayLogicalNames="true" showPrimaryTag="true" showForeignTag="true" showAlternateTag="true" columnVisibility="ALL" relationshipLabelVisibility="true">
@@ -392,15 +424,16 @@
   <table-pane table-ref="TAB73" x="90" y="351" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB79" x="896" y="601" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
   <table-pane table-ref="TAB86" x="34" y="137" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
-  <table-link relationship-ref="REL107" pkConnection="0.6039215686274509" fkConnection="0.4212328767123288" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
-  <table-link relationship-ref="REL91" pkConnection="0.07874015748031496" fkConnection="1.0" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="65"/>
-  <table-link relationship-ref="REL105" pkConnection="0.44" fkConnection="0.5493827160493827" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
-  <table-link relationship-ref="REL93" pkConnection="0.6631205673758865" fkConnection="0.43209876543209874" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
-  <table-link relationship-ref="REL101" pkConnection="0.5231316725978647" fkConnection="0.47678018575851394" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
-  <table-link relationship-ref="REL95" pkConnection="0.5035460992907801" fkConnection="0.4953560371517028" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
-  <table-link relationship-ref="REL99" pkConnection="0.8829787234042553" fkConnection="0.0" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="36"/>
-  <table-link relationship-ref="REL97" pkConnection="0.6086956521739131" fkConnection="0.15873015873015872" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="18"/>
-  <table-link relationship-ref="REL103" pkConnection="0.5693950177935944" fkConnection="0.41134751773049644" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="72"/>
+  <table-pane table-ref="TAB91" x="582" y="660" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
+  <table-link relationship-ref="REL116" pkConnection="0.6039215686274509" fkConnection="0.4212328767123288" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
+  <table-link relationship-ref="REL100" pkConnection="0.07874015748031496" fkConnection="1.0" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="65"/>
+  <table-link relationship-ref="REL114" pkConnection="0.44" fkConnection="0.5493827160493827" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
+  <table-link relationship-ref="REL102" pkConnection="0.6631205673758865" fkConnection="0.43209876543209874" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
+  <table-link relationship-ref="REL110" pkConnection="0.5231316725978647" fkConnection="0.47678018575851394" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
+  <table-link relationship-ref="REL104" pkConnection="0.5035460992907801" fkConnection="0.4953560371517028" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="132"/>
+  <table-link relationship-ref="REL108" pkConnection="0.8829787234042553" fkConnection="0.0" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="36"/>
+  <table-link relationship-ref="REL106" pkConnection="0.6086956521739131" fkConnection="0.15873015873015872" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="18"/>
+  <table-link relationship-ref="REL112" pkConnection="0.5693950177935944" fkConnection="0.41134751773049644" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="72"/>
  </play-pen>
  <critic-manager>
   <critic-grouping platformType="Generic" enabled="true">

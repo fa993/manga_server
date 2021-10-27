@@ -66,10 +66,6 @@ public class Manga {
     @Column(name = "description")
     private String description;
 
-    @JsonView(Views.Heading.class)
-    @Column(name = "description_small")
-    private String descriptionSmall;
-
     @JsonView(Views.PrettyHeading.class)
     @ManyToMany
     @JoinTable(
@@ -92,13 +88,6 @@ public class Manga {
     }
 
     public Manga() {
-    }
-
-    public Manga(String id, String name, String coverURL, String descriptionSmall) {
-        this.id = id;
-        this.name = name;
-        this.coverURL = coverURL;
-        this.descriptionSmall = descriptionSmall;
     }
 
     public String getId() {
@@ -197,14 +186,6 @@ public class Manga {
         this.description = description;
     }
 
-    public String getDescriptionSmall() {
-        return descriptionSmall;
-    }
-
-    public void setDescriptionSmall(String descriptionSmall) {
-        this.descriptionSmall = descriptionSmall;
-    }
-
     public List<Genre> getGenres() {
         return genres;
     }
@@ -251,7 +232,6 @@ public class Manga {
                 ", artists=" + artists +
                 ", lastUpdated=" + lastUpdated +
                 ", description='" + description + '\'' +
-                ", descriptionSmall='" + descriptionSmall + '\'' +
                 ", genres=" + genres +
                 ", status='" + status + '\'' +
                 ", isMain=" + main +
