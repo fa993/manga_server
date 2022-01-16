@@ -25,6 +25,8 @@ public interface MangaRepository extends JpaRepository<Manga, String> {
 
 	public List<MangaPriority> getAllBy();
 
+	public long deleteByUrl(String url);
+
 	@Modifying
 	@Query(
 

@@ -164,11 +164,16 @@ public class MultiThreadScrapper {
     }
 
     private void parseAndInsert(AtomicInteger c, String t, SourceScrapper sc) {
-        if (mangaManager.isAlreadyProcessed(t)) {
+        boolean b = problemChildManager.isProblem(t);
+        if (mangaManager.isAlreadyProcessed(t) && !problemChildManager.isProblem(t)) {
             System.out.println(t + ": Already Processed");
             return;
         }
-        System.out.println(t + ": Processing " + t + " from " + sc.toString());
+        String toPrint = t + ": Processing " + t + " from " + sc.toString();
+        if(b) {
+            toPrint += " which is problem";
+        }
+        System.out.println(toPrint);
         MangaDTO mn = null;
         try {
             long t1 = System.currentTimeMillis();
@@ -204,7 +209,7 @@ public class MultiThreadScrapper {
         }
     }
 
-    @Scheduled(initialDelay = 5 * 60 * 1000,fixedDelay = 5 * 60 * 1000)
+//    @Scheduled(initialDelay = 5 * 60 * 1000,fixedDelay = 5 * 60 * 1000)
     public void watch() throws InterruptedException, ExecutionException {
 
         if(this.running) {

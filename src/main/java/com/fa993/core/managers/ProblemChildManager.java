@@ -18,4 +18,8 @@ public class ProblemChildManager {
         }
     }
 
+    public boolean isProblem(String url) {
+        return repo.existsByUrl(url);
+    }
+
 }
