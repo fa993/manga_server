@@ -108,6 +108,7 @@ public class MangaManager {
     public Manga insert(boolean firstTime, Manga manga) {
         if(repo.existsByUrl(manga.getUrl())) {
             repo.deleteByUrl(manga.getUrl());
+            repo.flush();
         }
         if (firstTime) {
             Boolean ret = isPrimary(manga.getLinkedId(), manga.getSource().getPriority());
