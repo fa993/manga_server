@@ -1,7 +1,6 @@
 package com.fa993.core.pojos;
 
 import com.fa993.utils.Utility;
-import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 
@@ -14,7 +13,6 @@ public class Genre {
     private String id;
 
     @Column(name = "name")
-    @JsonView(Views.Heading.class)
     private String name;
 
     public Genre() {

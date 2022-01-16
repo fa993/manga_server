@@ -25,12 +25,14 @@ public interface MangaListingRepository extends JpaRepository<MangaListing, Inte
     )
     public List<MangaHeading> findIdsWithSource(@Param(value = "query1") String searchString, @Param(value = "query2") String sourceId, @Param(value = "offset") int offset, @Param(value = "limit") int limit);
 
+    //TODO test a self join query to capture genre in different sources
     @Query(
             value = "select manga_listing.manga_id as id, manga_listing.name as name, manga_listing.cover_url as coverURL, manga_listing.description_small as smallDescription, manga_listing.genres as genres from manga, manga_listing, manga_genre where manga.manga_id = manga_genre.manga_id AND manga.manga_id = manga_listing.manga_id AND manga_genre.genre_id IN :genres AND manga.is_main = 1 group by manga.manga_id HAVING count(*) = :size order by manga.name ASC limit :offset, :limit",
             nativeQuery = true
     )
     public List<MangaHeading> getHomePage(@Param(value = "genres") List<String> genres, @Param(value = "size") int size, @Param(value = "offset") int offset, @Param(value = "limit") int limit);
 
+    //TODO test a self join query to capture genre in different sources
     @Query(
             value = "select manga_listing.manga_id as id, manga_listing.name as name, manga_listing.cover_url as coverURL, manga_listing.description_small as smallDescription, manga_listing.genres as genres from manga, manga_listing where manga.is_main = 1 AND manga.manga_id = manga_listing.manga_id  order by manga.name ASC limit :offset, :limit",
             nativeQuery = true

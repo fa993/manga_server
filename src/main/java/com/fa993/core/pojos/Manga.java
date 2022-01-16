@@ -1,8 +1,6 @@
 package com.fa993.core.pojos;
 
 import com.fa993.utils.Utility;
-import com.fasterxml.jackson.annotation.JsonView;
-import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -12,7 +10,6 @@ import java.util.List;
 @Table(name = "manga")
 public class Manga {
 
-    @JsonView(Views.Heading.class)
     @Id
     @Column(name = "manga_id")
     private String id;
@@ -20,11 +17,9 @@ public class Manga {
     @Column(name = "linked_id")
     private String linkedId;
 
-    @JsonView(Views.Heading.class)
     @Column(name = "name")
     private String name;
 
-    @JsonView(Views.Heading.class)
     @Column(name = "cover_url")
 //    @ColumnTransformer(forColumn = "cover_url", read = "UNCOMPRESS(cover_url)", write = "COMPRESS(?)")
     private String coverURL;
@@ -66,7 +61,6 @@ public class Manga {
     @Column(name = "description")
     private String description;
 
-    @JsonView(Views.PrettyHeading.class)
     @ManyToMany
     @JoinTable(
             name = "manga_genre",

@@ -1,28 +1,20 @@
 package com.fa993.core.pojos;
 
-import com.fa993.core.dto.GenreData;
-import com.fasterxml.jackson.annotation.JsonView;
 
 import java.util.List;
 
 public class MangaQuery {
 
-    @JsonView(Views.Query.class)
     private String id;
 
-    @JsonView(Views.Query.class)
     private String name;
 
-    @JsonView(Views.Query.class)
     private int offset;
 
-    @JsonView(Views.Query.class)
     private int limit;
 
-    @JsonView(Views.Query.class)
     private String preferredSourceId;
 
-    @JsonView(Views.Query.class)
     private List<String> genreIds;
 
 
