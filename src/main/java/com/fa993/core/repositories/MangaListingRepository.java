@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface MangaListingRepository extends JpaRepository<MangaListing, Integer> {
 
+    public long deleteByMangaId(String mangaId);
+
     public Optional<MangaListing> getByMangaId(String mangaId);
 
     @Query(

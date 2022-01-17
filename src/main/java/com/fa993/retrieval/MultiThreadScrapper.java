@@ -192,7 +192,7 @@ public class MultiThreadScrapper {
                 boolean f = true;
                 while (f) {
                     try {
-                        mangaManager.insert(true, parse(mn));
+                        mangaManager.insert(parse(mn));
                         f = false;
                     } catch (CannotAcquireLockException ex) {
                         System.out.println(mn.getTitles() + " deadlocked");
@@ -327,17 +327,16 @@ public class MultiThreadScrapper {
                         g.setWatchTime(System.currentTimeMillis());
                     }
                 });
-                Manga m2 = parse(dto);
                 String id = mangaManager.getId(t);
-                m2.setId(id);
                 if (id == null) {
-                    mangaManager.insert(true, m2);
+                    Manga m2 = parse(dto);
+                    mangaManager.insert(m2);
                     c.incrementAndGet();
                     System.out.println("Inserted " + dto.getPrimaryTitle());
                 } else {
-                    Manga l = mangaManager.insert(false, m2);
-                    boolean a = metadataEqualsOnly(l, dto);
-                    boolean b = chapterListEqualsOnly(l, dto);
+                    Manga m1 = mangaManager.getManga(id);
+                    boolean a = metadataEqualsOnly(m1, dto);
+                    boolean b = chapterListEqualsOnly(m1, dto);
                     boolean same = a && b;
                     if (same) {
                         if (watchMode == WatchMode.SHALLOW) {
@@ -348,6 +347,10 @@ public class MultiThreadScrapper {
                         }
                         return;
                     } else {
+                        Manga m2 = parse(dto);
+                        m2.setId(m1.getId());
+                        m2.setMain(m1.isMain());
+                        Manga l = mangaManager.insert(m2);
                         System.out.println("Updated: " + dto.getPrimaryTitle());
                         if (!b) {
                             try {

@@ -64,6 +64,10 @@ public class MangaManager {
         return new CompleteManga(main, linked);
     }
 
+    public Manga getManga(String id) {
+        return repo.findById(id).orElse(null);
+    }
+
     public LinkedMangaData getPartById(String id) {
         return repo.readById(id);
     }
@@ -105,18 +109,17 @@ public class MangaManager {
         }
     }
 
-    public Manga insert(boolean firstTime, Manga manga) {
+    public Manga insert(Manga manga) {
         if(repo.existsByUrl(manga.getUrl())) {
-            repo.deleteByUrl(manga.getUrl());
+            deleteManga(manga);
+            this.priorities.get(manga.getLinkedId()).remove(manga.getSource().getPriority());
             repo.flush();
         }
-        if (firstTime) {
-            Boolean ret = isPrimary(manga.getLinkedId(), manga.getSource().getPriority());
-            manga.setMain(ret);
-            if (ret != null && ret) {
-                //TODO sometimes deadlock occurs here
-                repo.updateMainState(manga.getLinkedId());
-            }
+        Boolean ret = isPrimary(manga.getLinkedId(), manga.getSource().getPriority());
+        manga.setMain(ret);
+        if (ret != null && ret) {
+            //TODO sometimes deadlock occurs here
+            repo.updateMainState(manga.getLinkedId());
         }
         Manga m = repo.saveAndFlush(manga);
         MangaListing ls = listingManager.getByMangaId(m.getId());
@@ -135,6 +138,12 @@ public class MangaManager {
         manager.clear();
         manager.getEntityManagerFactory().getCache().evictAll();
     }
+
+    public void deleteManga(Manga manga) {
+        repo.deleteByUrl(manga.getUrl());
+        listingManager.deleteByMangaId(manga.getId());
+    }
+
 
     public void deleteAll() {
     }

@@ -26,6 +26,10 @@ public class MangaListingManager {
         return repo.getByMangaId(mangaId).orElseGet(() -> new MangaListing(mangaId));
     }
 
+    public long deleteByMangaId(String mangaId) {
+        return repo.deleteByMangaId(mangaId);
+    }
+
     public List<MangaHeading> findAllByQuery(MangaQuery query) {
         return (query.getPreferredSourceId() == null ? repo.findIdsWithoutSource("%" + query.getName() + "%", query.getOffset(), query.getLimit()) : repo.findIdsWithSource("%" + query.getName() + "%", query.getPreferredSourceId(), query.getOffset(), query.getLimit()));
     }
