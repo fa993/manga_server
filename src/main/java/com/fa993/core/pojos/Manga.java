@@ -61,7 +61,7 @@ public class Manga {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "manga_genre",
             joinColumns = @JoinColumn(name = "manga_id", referencedColumnName = "manga_id"),
