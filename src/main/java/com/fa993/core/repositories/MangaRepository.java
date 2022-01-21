@@ -38,7 +38,7 @@ public interface MangaRepository extends JpaRepository<Manga, String> {
 	public void updateMainState(@Param(value = "link") String linkedId);
 
 	@Query(
-			value = "update manga set last_watch_time = :tm where id = :id",
+			value = "update manga set last_watch_time = :tm where manga_id = :id",
 			nativeQuery = true
 	)
 	public void updateWatchTime(@Param(value = "id") String id, @Param(value = "tm") Long time);
