@@ -33,7 +33,7 @@ public class Manganelo implements SourceScrapper {
 	private static final String GENRES = "Genres :";
 	private static final String UPDATED = "Updated :";
 
-	private static final int NO_OF_PAGES_TO_WATCH = 1;
+	private static final int NO_OF_PAGES_TO_WATCH = 10;
 
 	private static final DateTimeFormatter FMT = new DateTimeFormatterBuilder().appendPattern("MMM dd,yyyy - HH:mm")
 			.parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0).toFormatter().withZone(ZoneId.systemDefault());

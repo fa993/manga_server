@@ -64,6 +64,10 @@ public class MangaManager {
         return new CompleteManga(main, linked);
     }
 
+    public URLData getUrlById(String id){
+        return this.repo.getQwById(id);
+    }
+
     public Manga getManga(String id) {
         return repo.findById(id).orElse(null);
     }

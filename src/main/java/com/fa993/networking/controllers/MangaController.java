@@ -5,9 +5,12 @@ import com.fa993.core.exceptions.NoSuchMangaException;
 import com.fa993.core.managers.GenreManager;
 import com.fa993.core.managers.MangaListingManager;
 import com.fa993.core.managers.PageManager;
+import com.fa993.core.pojos.Manga;
 import com.fa993.core.pojos.MangaQuery;
 import com.fa993.core.managers.MangaManager;
 import com.fa993.core.pojos.MangaQueryResponse;
+import com.fa993.retrieval.MultiThreadScrapper;
+import com.fa993.retrieval.SourceScrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,16 +25,24 @@ public class MangaController {
     public GenreManager genreManager;
     public MangaListingManager listingManager;
 
-    public MangaController(MangaManager repo1, PageManager repo2, GenreManager repo3, MangaListingManager repo4) {
+    public MultiThreadScrapper sct;
+
+    public MangaController(MangaManager repo1, PageManager repo2, GenreManager repo3, MangaListingManager repo4, MultiThreadScrapper sc) {
         this.mangaManager = repo1;
         this.pageManager = repo2;
         this.genreManager = repo3;
         this.listingManager = repo4;
+        this.sct = sc;
     }
 
     @GetMapping("/{id}")
     public CompleteManga getManga(@PathVariable(name = "id") String id) {
-        return this.mangaManager.getById(id);
+        CompleteManga m = this.mangaManager.getById(id);
+        this.sct.watchSingle(this.mangaManager.getUrlById(m.main().getId()).getUrl(), m.main().getSource().getId());
+        for(LinkedMangaData ld : m.related()) {
+            this.sct.watchSingle(this.mangaManager.getUrlById(ld.getId()).getUrl(), ld.getSource().getId());
+        }
+        return m;
     }
 
     @GetMapping("/part/{id}")
