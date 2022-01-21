@@ -47,6 +47,7 @@ public class Manga {
             joinColumns = @JoinColumn(name = "manga_id", referencedColumnName = "manga_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id", referencedColumnName = "author_id")
     )
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Author> authors;
 
     @ManyToMany
@@ -55,6 +56,7 @@ public class Manga {
             joinColumns = @JoinColumn(name = "manga_id", referencedColumnName = "manga_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id", referencedColumnName = "author_id")
     )
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Author> artists;
 
     @Column(name = "last_updated")
