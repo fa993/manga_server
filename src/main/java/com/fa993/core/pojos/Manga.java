@@ -1,6 +1,8 @@
 package com.fa993.core.pojos;
 
 import com.fa993.utils.Utility;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -61,12 +63,13 @@ public class Manga {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "manga_genre",
             joinColumns = @JoinColumn(name = "manga_id", referencedColumnName = "manga_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id", referencedColumnName = "genre_id")
     )
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Genre> genres;
 
     @Column(name = "status")
