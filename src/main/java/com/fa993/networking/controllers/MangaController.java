@@ -14,6 +14,8 @@ import com.fa993.retrieval.SourceScrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -38,9 +40,16 @@ public class MangaController {
     @GetMapping("/{id}")
     public CompleteManga getManga(@PathVariable(name = "id") String id) {
         CompleteManga m = this.mangaManager.getById(id);
-        this.sct.watchSingle(this.mangaManager.getUrlById(m.main().getId()).getUrl(), m.main().getSource().getId());
+        Long ref = System.currentTimeMillis();
+        WatchData dt = this.mangaManager.getUrlById(m.main().getId());
+        if(dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, dt.getLastWatchTime())) {
+            this.sct.watchSingle(dt.getUrl(), m.main().getSource().getId());
+        }
         for(LinkedMangaData ld : m.related()) {
-            this.sct.watchSingle(this.mangaManager.getUrlById(ld.getId()).getUrl(), ld.getSource().getId());
+            WatchData dt0 = this.mangaManager.getUrlById(ld.getId());
+            if(dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, dt0.getLastWatchTime())) {
+                this.sct.watchSingle(dt0.getUrl(), ld.getSource().getId());
+            }
         }
         return m;
     }

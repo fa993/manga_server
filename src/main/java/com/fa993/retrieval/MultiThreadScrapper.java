@@ -218,7 +218,7 @@ public class MultiThreadScrapper {
         }
     }
 
-    @Scheduled(initialDelay = 1 * 60 * 1000,fixedDelay = 24 * 60 * 60 * 1000)
+    @Scheduled(initialDelay = 1 * 60 * 1000,fixedRate = 24 * 60 * 60 * 1000)
     public void watchForExistence() throws InterruptedException, ExecutionException{
         if(this.running) {
             System.out.println("Currently Running so aborting watch");
@@ -560,6 +560,7 @@ public class MultiThreadScrapper {
         m.setArtists(rec.getArtists().stream().map(t -> authorManager.getAuthor(t.toLowerCase())).toList());
         m.setChapters(rec.getChapters().stream().map(Chapter::new).toList());
         m.setLinkedId(titleManager.add(rec.getTitles()));
+        m.setLastWatchTime(System.currentTimeMillis());
         return m;
     }
 

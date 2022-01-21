@@ -4,20 +4,15 @@ import com.fa993.core.dto.*;
 import com.fa993.core.exceptions.NoSuchMangaException;
 import com.fa993.core.pojos.Manga;
 import com.fa993.core.pojos.MangaListing;
-import com.fa993.core.pojos.MangaQuery;
-import com.fa993.core.pojos.Source;
 import com.fa993.core.repositories.MangaRepository;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Priority;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,6 +33,7 @@ public class MangaManager {
     private static final String ID_PARAM = "query3";
     private static final String GENRE_PARAM = "query4";
 
+    private static final long oldAge = 1000 * 60 * 5;
 
     MangaRepository repo;
 
@@ -64,12 +60,16 @@ public class MangaManager {
         return new CompleteManga(main, linked);
     }
 
-    public URLData getUrlById(String id){
+    public WatchData getUrlById(String id){
         return this.repo.getQwById(id);
     }
 
     public Manga getManga(String id) {
         return repo.findById(id).orElse(null);
+    }
+
+    public boolean isOld(Long ref1, Long ref2) {
+        return ref1 - ref2 > oldAge;
     }
 
     public LinkedMangaData getPartById(String id) {

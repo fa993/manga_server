@@ -80,6 +80,9 @@ public class Manga {
     @Column(name = "is_main")
     private Boolean main;
 
+    @Column(name = "last_watch_time")
+    private Long lastWatchTime;
+
     public static Manga fromURL(String url) {
         Manga m = new Manga();
         m.setUrl(url);
@@ -209,6 +212,14 @@ public class Manga {
         this.main = main;
     }
 
+    public Long getLastWatchTime() {
+        return lastWatchTime;
+    }
+
+    public void setLastWatchTime(Long lastWatchTime) {
+        this.lastWatchTime = lastWatchTime;
+    }
+
     @PrePersist
     public void prePersist() {
         if (this.id == null) {
@@ -224,7 +235,7 @@ public class Manga {
                 ", name='" + name + '\'' +
                 ", coverURL='" + coverURL + '\'' +
                 ", url='" + url + '\'' +
-                ", isListed=" + listed +
+                ", listed=" + listed +
                 ", source=" + source +
                 ", chapters=" + chapters +
                 ", authors=" + authors +
@@ -233,8 +244,8 @@ public class Manga {
                 ", description='" + description + '\'' +
                 ", genres=" + genres +
                 ", status='" + status + '\'' +
-                ", isMain=" + main +
+                ", main=" + main +
+                ", lastWatchTime=" + lastWatchTime +
                 '}';
     }
-
 }

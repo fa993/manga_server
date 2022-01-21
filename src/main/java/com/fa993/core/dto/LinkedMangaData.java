@@ -1,5 +1,6 @@
 package com.fa993.core.dto;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface LinkedMangaData {
@@ -13,5 +14,7 @@ public interface LinkedMangaData {
     public SourceData getSource();
 
     public List<ChapterData> getChapters();
+
+    public Timestamp getLastUpdated();
 
 }
