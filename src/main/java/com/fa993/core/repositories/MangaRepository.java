@@ -37,6 +37,12 @@ public interface MangaRepository extends JpaRepository<Manga, String> {
 	)
 	public void updateMainState(@Param(value = "link") String linkedId);
 
+	@Query(
+			value = "update manga set last_watch_time = :tm where id = :id",
+			nativeQuery = true
+	)
+	public void updateWatchTime(@Param(value = "id") String id, @Param(value = "tm") Long time);
+
 //	@Query(
 //			value = "select manga.manga_id as id, manga.name as name, manga.cover_url as coverURL, manga.description_small as descriptionSmall, group_concat(genre.name separator ', ') as genres from manga, manga_genre, genre where manga_genre.genre_id = genre.genre_id AND manga.manga_id = manga_genre.manga_id AND exists (select linked_id from title where manga.linked_id = title.linked_id AND title.title LIKE :query1 ) AND manga.is_main = 1 group by manga.manga_id limit :offset, :limit",
 //			nativeQuery = true

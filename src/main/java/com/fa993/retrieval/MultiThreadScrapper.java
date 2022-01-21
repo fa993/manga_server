@@ -523,6 +523,7 @@ public class MultiThreadScrapper {
                     boolean same = a && b;
                     if (same) {
                         System.out.println("Manga are same doing nothing");
+                        this.mangaManager.updateWatchTime(m1.getId(), System.currentTimeMillis());
                         return;
                     } else {
                         Manga m2 = parse(dto);

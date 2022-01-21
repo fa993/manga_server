@@ -33,7 +33,7 @@ public class MangaManager {
     private static final String ID_PARAM = "query3";
     private static final String GENRE_PARAM = "query4";
 
-    private static final long oldAge = 1000 * 60 * 5;
+    private static final long oldAge = 1000 * 60 * 15;
 
     MangaRepository repo;
 
@@ -70,6 +70,10 @@ public class MangaManager {
 
     public boolean isOld(Long ref1, Long ref2) {
         return ref1 - ref2 > oldAge;
+    }
+
+    public void updateWatchTime(String id, Long time) {
+        this.repo.updateWatchTime(id, time);
     }
 
     public LinkedMangaData getPartById(String id) {
