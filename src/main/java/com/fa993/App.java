@@ -28,6 +28,6 @@ public class App implements ApplicationRunner {
         System.out.println(System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));
         FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.getApplicationDefault()).build();
         FirebaseApp.initializeApp(options); //will test on compute engine
-        scp.run();
+//        scp.run();
     }
 }

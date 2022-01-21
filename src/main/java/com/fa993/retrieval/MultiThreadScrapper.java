@@ -56,8 +56,8 @@ public class MultiThreadScrapper {
         this.pageManager = pageManager;
         this.titleManager = titleManager;
         this.problemChildManager = problemChildManager;
-        this.runThreads = 32;
-        this.watchThreads = 32;
+        this.runThreads = 4;//32
+        this.watchThreads = 4;//32
         ScanResult rs = new ClassGraph().acceptPackages(this.getClass().getPackageName()).enableAllInfo().scan();
         List<SourceScrapper> tmp = new ArrayList<>();
         rs.getClassesWithAnnotation(Scrapper.class.getName())
@@ -209,7 +209,7 @@ public class MultiThreadScrapper {
         }
     }
 
-//    @Scheduled(initialDelay = 5 * 60 * 1000,fixedDelay = 5 * 60 * 1000)
+    @Scheduled(initialDelay = 5 * 60 * 1000,fixedDelay = 5 * 60 * 1000)
     public void watch() throws InterruptedException, ExecutionException {
 
         if(this.running) {
@@ -229,7 +229,8 @@ public class MultiThreadScrapper {
             return t;
         });
 
-        WatchMode watchMode = (watchCount++) % 4 == 0 ? WatchMode.DEEP : WatchMode.SHALLOW;
+//        WatchMode watchMode = (watchCount++) % 4 == 0 ? WatchMode.DEEP : WatchMode.SHALLOW;
+        WatchMode watchMode = WatchMode.SHALLOW;
 
         AtomicInteger c = new AtomicInteger(0);
         long t0 = System.currentTimeMillis();
