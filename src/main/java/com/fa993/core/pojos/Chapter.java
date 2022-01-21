@@ -6,14 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.fa993.retrieval.pojos.ChapterDTO;
 
@@ -37,7 +30,7 @@ public class Chapter {
 	@Column(name = "chapter_number")
 	private String chapterNumber;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "chapter_id", referencedColumnName = "chapter_id")
 	private List<Page> imagesURL;
 
