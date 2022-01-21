@@ -5,9 +5,11 @@ import com.fa993.core.pojos.Genre;
 import com.fa993.core.repositories.GenreRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
+@Transactional
 public class GenreManager {
 
     GenreRepository repo;

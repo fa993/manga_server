@@ -6,7 +6,10 @@ import org.springframework.stereotype.Service;
 import com.fa993.core.pojos.ProblemChild;
 import com.fa993.core.repositories.ProblemChildRepository;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class ProblemChildManager {
 
     @Autowired
