@@ -33,7 +33,7 @@ public class MangaManager {
     private static final String ID_PARAM = "query3";
     private static final String GENRE_PARAM = "query4";
 
-    private static final long oldAge = 1000 * 60 * 60 * 15;
+    private static final long oldAge = 1000 * 60 * 15;
 
     MangaRepository repo;
 
@@ -69,7 +69,7 @@ public class MangaManager {
     }
 
     public boolean isOld(Long ref1, Long ref2) {
-        return ref1 - ref2 > oldAge;
+        return Math.abs(ref1 - ref2) > oldAge;
     }
 
     public void updateWatchTime(String id, Long time) {
@@ -96,39 +96,23 @@ public class MangaManager {
             mps.add(priority);
             return true;
         } else {
-            Boolean ret = mps.stream().reduce(true, (r, e) -> {
-                if (r == null) {
-                    return r;
-                }
-                int x = priority - e;
-                if (x == 0) {
-                    return null;
-                }
-                return x < 0 && r;
-            }, (l, r) -> {
-                if (l == null || r == null) {
-                    return null;
-                } else {
-                    return l && r;
-                }
-            });
+            Integer inti = mps.stream().max(Comparator.naturalOrder()).orElse(-1);
             mps.add(priority);
-            return ret;
+            return priority - inti >= 0;
         }
     }
 
     public Manga insert(Manga manga) {
         if(repo.existsByUrl(manga.getUrl())) {
             deleteManga(manga);
-            this.priorities.get(manga.getLinkedId()).remove(manga.getSource().getPriority());
             repo.flush();
         }
         Boolean ret = isPrimary(manga.getLinkedId(), manga.getSource().getPriority());
         manga.setMain(ret);
-        if (ret != null && ret) {
-            //TODO sometimes deadlock occurs here
-            repo.updateMainState(manga.getLinkedId());
-        }
+//        if (ret != null && ret) {
+//            //TODO sometimes deadlock occurs here
+//            repo.updateMainState(manga.getLinkedId());
+//        }
         Manga m = repo.saveAndFlush(manga);
         MangaListing ls = listingManager.getByMangaId(m.getId());
         ls.setName(m.getName());
@@ -148,6 +132,7 @@ public class MangaManager {
     }
 
     public void deleteManga(Manga manga) {
+        this.priorities.get(manga.getLinkedId()).remove(manga.getSource().getPriority());
         repo.deleteByUrl(manga.getUrl());
         listingManager.deleteByMangaId(manga.getId());
     }
