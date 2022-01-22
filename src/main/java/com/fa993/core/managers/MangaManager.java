@@ -131,6 +131,11 @@ public class MangaManager {
         manager.getEntityManagerFactory().getCache().evictAll();
     }
 
+    public void deleteManga(String id) {
+        this.repo.deleteById(id);
+        this.repo.flush();
+    }
+
     public void deleteManga(Manga manga) {
         this.priorities.get(manga.getLinkedId()).remove(manga.getSource().getPriority());
         repo.deleteByUrl(manga.getUrl());

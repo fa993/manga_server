@@ -85,6 +85,8 @@ public class MultiThreadScrapper {
             return t0;
         });
         this.prime();
+        this.mangaManager.deleteManga("1ed33b0f-f8a6-44d6-b464-40f59f8ec7b3");
+//        this.mangaManager.deleteManga("1d1e0bf7-9283-4e3d-ba1e-ea71a1f2c7cd");
     }
 
     public void prime() {
