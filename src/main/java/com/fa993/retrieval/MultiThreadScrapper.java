@@ -504,6 +504,7 @@ public class MultiThreadScrapper {
             e.printStackTrace();
             problemChildManager.insert(e.getURL());
             System.out.println("Happened with problem : " + e.getURL());
+            dto = e.getPartialManga();
         } finally {
             if (dto != null) {
                 dto.getChapters().forEach(g -> {
