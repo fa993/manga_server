@@ -284,10 +284,15 @@ public class MultiThreadScrapper {
                 pageExecutor.submit(() -> {
                     tmp.addAll(mangaExecutor.invokeAll(sc.watch(x + 1).stream().map(t ->
                             (Callable<Object>) () -> {
-                                if (!mangaExecutor.isShutdown()) {
-                                    insertIfNotExists(t, c, f2, sc);
+                                try {
+                                    if (!mangaExecutor.isShutdown()) {
+                                        insertIfNotExists(t, c, f2, sc);
+                                    }
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                } finally {
+                                    return null;
                                 }
-                                return null;
                             }
                     ).toList()));
                     return null;
