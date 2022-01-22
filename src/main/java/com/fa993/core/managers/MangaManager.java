@@ -33,7 +33,7 @@ public class MangaManager {
     private static final String ID_PARAM = "query3";
     private static final String GENRE_PARAM = "query4";
 
-    private static final long oldAge = 1000 * 60 * 15;
+    private static final long oldAge = 1000 * 60 * 60 * 15;
 
     MangaRepository repo;
 
