@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/public/manga")
@@ -29,12 +31,15 @@ public class MangaController {
 
     public MultiThreadScrapper sct;
 
+    private Map<String, Long> lastWatchesById;
+
     public MangaController(MangaManager repo1, PageManager repo2, GenreManager repo3, MangaListingManager repo4, MultiThreadScrapper sc) {
         this.mangaManager = repo1;
         this.pageManager = repo2;
         this.genreManager = repo3;
         this.listingManager = repo4;
         this.sct = sc;
+        this.lastWatchesById = new HashMap<>();
     }
 
     @GetMapping("/{id}")
@@ -42,13 +47,15 @@ public class MangaController {
         CompleteManga m = this.mangaManager.getById(id);
         Long ref = System.currentTimeMillis();
         WatchData dt = this.mangaManager.getUrlById(m.main().getId());
-        if(dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, dt.getLastWatchTime())) {
+        if(dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(dt.getLastWatchTime(), this.lastWatchesById.getOrDefault(m.main().getId(), 0L)))) {
             this.sct.watchSingle(dt.getUrl(), m.main().getSource().getId());
+            this.lastWatchesById.put(m.main().getId(), ref);
         }
         for(LinkedMangaData ld : m.related()) {
             WatchData dt0 = this.mangaManager.getUrlById(ld.getId());
-            if(dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, dt0.getLastWatchTime())) {
+            if(dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(dt0.getLastWatchTime(), this.lastWatchesById.getOrDefault(ld.getId(), 0L)))) {
                 this.sct.watchSingle(dt0.getUrl(), ld.getSource().getId());
+                this.lastWatchesById.put(ld.getId(), ref);
             }
         }
         return m;

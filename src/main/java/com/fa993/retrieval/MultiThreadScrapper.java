@@ -482,6 +482,10 @@ public class MultiThreadScrapper {
     }
 
     private void doWatchSingle(String t, String sourceId) {
+//        if(!this.mangaManager.isOld(System.currentTimeMillis(), ref2)) {
+//            System.out.println("Timeout not elapsed");
+//            return;
+//        }
         MangaDTO dto = null;
         SourceScrapper sc = null;
         for(SourceScrapper s1 : this.sct) {
