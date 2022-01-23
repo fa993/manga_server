@@ -12,6 +12,8 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.parameters.P;
@@ -28,6 +30,8 @@ import java.util.function.Supplier;
 
 @Component
 public class MultiThreadScrapper {
+
+    Logger logger = LoggerFactory.getLogger(MultiThreadScrapper.class);
 
     private final int runThreads;
     private final int watchThreads;
@@ -588,6 +592,9 @@ public class MultiThreadScrapper {
     }
 
     private boolean metadataEqualsOnly(Manga m, MangaDTO md) {
+        if(m == null || md == null) {
+            logger.info("Null Manga Found");
+        }
         return m != null && md != null && m.getName().equals(md.getPrimaryTitle()) && m.getUrl().equals(md.getURL())
                 && m.getCoverURL().equals(md.getCoverURL()) && m.getDescription().equals(md.getDescription())
                 && m.getSource().equals(md.getSource()) && m.getStatus().equalsIgnoreCase(md.getStatus())
@@ -597,10 +604,16 @@ public class MultiThreadScrapper {
     }
 
     private boolean chapterListEqualsOnly(Manga m, MangaDTO md) {
+        if(m == null || md == null) {
+            logger.info("Null Manga Found");
+        }
         return m != null && md != null && listEquals(m.getChapters(), md.getChapters(), this::chapterEquals);
     }
 
     private boolean chapterEquals(Chapter c, ChapterDTO cd) {
+        if(c == null || cd == null) {
+            logger.info("Null Chapter Found");
+        }
         return c != null && cd != null && c.getChapterName().equals(cd.getChapterName()) && c.getChapterNumber().equals(cd.getChapterNumber())
                 && c.getSequenceNumber().equals(cd.getSequenceNumber())
                 && nullEquals(c.getUpdatedAt(), cd.getUpdatedAt(), (cx, cdx) -> nullEquals(cx.toInstant(), cdx, Instant::equals))
