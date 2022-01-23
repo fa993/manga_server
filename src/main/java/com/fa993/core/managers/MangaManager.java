@@ -65,7 +65,7 @@ public class MangaManager {
     }
 
     public Manga getManga(String publicId) {
-        return repo.findByPublicId(publicId).orElse(null);
+        return repo.findByPublicIdAndOldFalse(publicId).orElse(null);
     }
 
     public boolean isOld(Long ref1, Long ref2) {
