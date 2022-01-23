@@ -597,7 +597,7 @@ public class MultiThreadScrapper {
     }
 
     private boolean chapterListEqualsOnly(Manga m, MangaDTO md) {
-        return listEquals(m.getChapters(), md.getChapters(), this::chapterEquals);
+        return m != null && md != null && listEquals(m.getChapters(), md.getChapters(), this::chapterEquals);
     }
 
     private boolean chapterEquals(Chapter c, ChapterDTO cd) {

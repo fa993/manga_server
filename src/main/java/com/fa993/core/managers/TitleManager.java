@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Transactional
@@ -21,7 +22,7 @@ public class TitleManager {
 
     public TitleManager(TitleRepository repo) {
         this.repo = repo;
-        this.allTitles = new HashMap<>();
+        this.allTitles = new ConcurrentHashMap<>();
         repo.findAll().forEach(t -> allTitles.put(t.getTitle().toUpperCase(), t.getLinkedId()));
     }
 
