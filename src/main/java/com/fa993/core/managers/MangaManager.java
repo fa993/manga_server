@@ -2,7 +2,6 @@ package com.fa993.core.managers;
 
 import com.fa993.core.dto.*;
 import com.fa993.core.exceptions.NoSuchMangaException;
-import com.fa993.core.pojos.Chapter;
 import com.fa993.core.pojos.Manga;
 import com.fa993.core.pojos.MangaListing;
 import com.fa993.core.repositories.MangaRepository;
@@ -14,8 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -64,7 +61,7 @@ public class MangaManager {
     }
 
     public WatchData getUrlById(String id){
-        return this.repo.getQwByPublicId(id);
+        return this.repo.getQwByPublicIdAndOldFalse(id);
     }
 
     public Manga getManga(String id) {

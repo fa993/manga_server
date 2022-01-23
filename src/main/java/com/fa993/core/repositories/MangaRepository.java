@@ -15,7 +15,7 @@ public interface MangaRepository extends JpaRepository<Manga, String> {
 
 	public MangaID findByUrl(String url);
 
-	public WatchData getQwByPublicId(String id);
+	public WatchData getQwByPublicIdAndOldFalse(String id);
 
 	public List<LinkedMangaData> findAllByLinkedIdAndPublicIdNotAndOldFalse(String linkedId, String mangaId);
 
