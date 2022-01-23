@@ -45,16 +45,16 @@ public class MangaController {
     public CompleteManga getManga(@PathVariable(name = "id") String id) {
         CompleteManga m = this.mangaManager.getById(id);
         Long ref = System.currentTimeMillis();
-        WatchData dt = this.mangaManager.getUrlById(m.main().getPublicId());
-        if(dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(m.main().getPublicId(), 0L), dt.getLastWatchTime()))) {
+        WatchData dt = this.mangaManager.getUrlById(m.main().getId());
+        if(dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(m.main().getId(), 0L), dt.getLastWatchTime()))) {
             this.sct.watchSingle(dt.getUrl(), m.main().getSource().getId());
-            this.lastWatchesById.put(m.main().getPublicId(), ref);
+            this.lastWatchesById.put(m.main().getId(), ref);
         }
         for(LinkedMangaData ld : m.related()) {
-            WatchData dt0 = this.mangaManager.getUrlById(ld.getPublicId());
-            if(dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(ld.getPublicId(), 0L), dt0.getLastWatchTime()))) {
+            WatchData dt0 = this.mangaManager.getUrlById(ld.getId());
+            if(dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(ld.getId(), 0L), dt0.getLastWatchTime()))) {
                 this.sct.watchSingle(dt0.getUrl(), ld.getSource().getId());
-                this.lastWatchesById.put(ld.getPublicId(), ref);
+                this.lastWatchesById.put(ld.getId(), ref);
             }
         }
         return m;

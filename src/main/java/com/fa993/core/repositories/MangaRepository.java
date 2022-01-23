@@ -16,15 +16,15 @@ public interface MangaRepository extends JpaRepository<Manga, String> {
 
 	public MangaID findByUrl(String url);
 
-	public Optional<Manga> findByPublicIdAndOldFalse(String publicId);
+//	public Optional<Manga> findByPublicIdAndOldFalse(String publicId);
 
-	public WatchData getQwByPublicIdAndOldFalse(String id);
+	public WatchData getQwById(String id);
 
-	public List<LinkedMangaData> findAllByLinkedIdAndPublicIdNotAndOldFalse(String linkedId, String mangaId);
+	public List<LinkedMangaData> findAllByLinkedIdAndIdNot(String linkedId, String mangaId);
 
-	public MainMangaData getByPublicIdAndOldFalse(String id);
+	public MainMangaData getById(String id);
 
-	public LinkedMangaData readByPublicIdAndOldFalse(String id);
+	public LinkedMangaData readById(String id);
 
 	public List<MangaPriority> getAllBy();
 

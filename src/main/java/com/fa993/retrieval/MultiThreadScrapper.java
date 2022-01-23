@@ -225,6 +225,7 @@ public class MultiThreadScrapper {
 
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void watchForExistence() throws InterruptedException, ExecutionException{
+        this.deleteOlds();
         if(this.running) {
             System.out.println("Currently Running so aborting watch");
             return;
@@ -321,7 +322,6 @@ public class MultiThreadScrapper {
         System.out.println("Done Watching");
     }
 
-    @Scheduled(initialDelay = 12 * 60 * 60 * 1000, fixedRate = 24 * 60 * 60 * 1000)
     public void deleteOlds() {
         this.mangaManager.deleteOlds();
     }
@@ -533,11 +533,15 @@ public class MultiThreadScrapper {
                 });
                 String id = mangaManager.getId(t);
                 if (id == null) {
-                    Manga m2 = parse(dto);
-                    mangaManager.insert(m2);
-                    System.out.println("Inserted " + dto.getPrimaryTitle());
-                    if(f != null) {
-                        f.incrementAndGet();
+                    try {
+                        Manga m2 = parse(dto);
+                        mangaManager.insert(m2);
+                        System.out.println("Inserted " + dto.getPrimaryTitle());
+                        if(f != null) {
+                            f.incrementAndGet();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 } else {
                     Manga m1 = mangaManager.getManga(id);

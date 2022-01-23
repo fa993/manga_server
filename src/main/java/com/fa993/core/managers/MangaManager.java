@@ -55,17 +55,17 @@ public class MangaManager {
     }
 
     public CompleteManga getById(String id) {
-        MainMangaData main = Optional.ofNullable(repo.getByPublicIdAndOldFalse(id)).orElseThrow(() -> NoSuchMangaException.constructFromID(id));
-        List<LinkedMangaData> linked = repo.findAllByLinkedIdAndPublicIdNotAndOldFalse(main.getLinkedId(), main.getPublicId());
+        MainMangaData main = Optional.ofNullable(repo.getById(id)).orElseThrow(() -> NoSuchMangaException.constructFromID(id));
+        List<LinkedMangaData> linked = repo.findAllByLinkedIdAndIdNot(main.getLinkedId(), main.getId());
         return new CompleteManga(main, linked);
     }
 
     public WatchData getUrlById(String id){
-        return this.repo.getQwByPublicIdAndOldFalse(id);
+        return this.repo.getQwById(id);
     }
 
-    public Manga getManga(String publicId) {
-        return repo.findByPublicIdAndOldFalse(publicId).orElse(null);
+    public Manga getManga(String id) {
+        return repo.findById(id).orElse(null);
     }
 
     public boolean isOld(Long ref1, Long ref2) {
@@ -77,7 +77,7 @@ public class MangaManager {
     }
 
     public LinkedMangaData getPartById(String id) {
-        return repo.readByPublicIdAndOldFalse(id);
+        return repo.readById(id);
     }
 
     public boolean isAlreadyProcessed(String url) {
@@ -86,7 +86,7 @@ public class MangaManager {
 
     public String getId(String url) {
         MangaID id = repo.findByUrl(url);
-        return id == null ? null : id.getPublicId();
+        return id == null ? null : id.getId();
     }
 
     public Boolean isPrimary(String linkedId, Integer priority) {
@@ -102,10 +102,11 @@ public class MangaManager {
         }
     }
 
-    public Manga insert(Manga manga) {
+    public Manga insert(Manga manga) throws Exception {
         if(repo.existsByUrl(manga.getUrl())) {
-            deleteManga(manga);
-            repo.flush();
+//            deleteManga(manga);
+//            repo.flush();
+            throw new Exception("Manga already Exists");
         }
         Boolean ret = isPrimary(manga.getLinkedId(), manga.getSource().getPriority());
         manga.setMain(ret);

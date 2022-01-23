@@ -2,7 +2,7 @@ package com.fa993.core.dto;
 
 public interface MangaHeading {
 
-    public String getPublicId();
+    public String getId();
 
     public String getName();
 
