@@ -143,8 +143,8 @@ public class MangaManager {
         this.priorities.get(manga.getLinkedId()).remove(manga.getSource().getPriority());
 //        repo.deleteByUrl(manga.getUrl());
         listingManager.deleteByMangaId(manga.getId());
-        repo.markForDeleteStageOne(manga.getId());
-        repo.markForDeleteStageTwo(manga.getId(), Utility.getID());
+        repo.markForDeleteStageOne(manga.getUrl());
+        repo.markForDeleteStageTwo(manga.getUrl(), Utility.getID());
     }
 
     public void deleteOlds() {

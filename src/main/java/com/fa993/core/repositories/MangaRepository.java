@@ -44,17 +44,17 @@ public interface MangaRepository extends JpaRepository<Manga, String> {
 
 	@Modifying
 	@Query(
-			value = "update manga set is_old = true where manga_id = :id",
+			value = "update manga set is_old = true where url = :url",
 			nativeQuery = true
 	)
-	public void markForDeleteStageOne(@Param(value = "id")String id);
+	public void markForDeleteStageOne(@Param(value = "url")String url);
 
 	@Modifying
 	@Query(
-			value = "update manga set url = :junk where manga_id = :id",
+			value = "update manga set url = :junk where url = :url",
 			nativeQuery = true
 	)
-	public void markForDeleteStageTwo(@Param(value = "id")String id, @Param(value = "junk") String junk);
+	public void markForDeleteStageTwo(@Param(value = "url")String url, @Param(value = "junk") String junk);
 
 	public void deleteAllByOldTrue();
 
