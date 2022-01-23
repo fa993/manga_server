@@ -153,7 +153,7 @@ public class MangaManager {
         StringBuilder sb1 = m.getGenres().stream().collect(StringBuilder::new, (sb, g) -> sb.append(StringUtils.capitalize(g.getName())).append(','), StringBuilder::append);
         sb1.deleteCharAt(sb1.length() - 1);
         ls.setGenres(sb1.toString());
-        listingManager.repo.saveAndFlush(ls);
+        listingManager.save(ls);
         this.repo.saveAndFlush(m);
         detachManagedObjects();
     }
