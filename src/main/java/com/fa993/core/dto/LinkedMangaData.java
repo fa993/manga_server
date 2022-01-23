@@ -7,6 +7,8 @@ public interface LinkedMangaData {
 
     public String getPublicId();
 
+    public String getLinkedId();
+
     public String getName();
 
     public String getCoverURL();
