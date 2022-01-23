@@ -510,7 +510,7 @@ public class MultiThreadScrapper {
         if(sc == null) {
             throw new RuntimeException("No matching Scrapper for given Source");
         }
-        System.out.println("Watching: " + t);
+        logger.info("Watching: " + t);
         try {
             long t1 = System.currentTimeMillis();
             dto = sc.getManga(t);
