@@ -2,17 +2,20 @@ package com.fa993.core.managers;
 
 import com.fa993.core.dto.*;
 import com.fa993.core.exceptions.NoSuchMangaException;
+import com.fa993.core.pojos.Chapter;
 import com.fa993.core.pojos.Manga;
 import com.fa993.core.pojos.MangaListing;
 import com.fa993.core.repositories.MangaRepository;
+import com.fa993.utils.Utility;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -55,13 +58,13 @@ public class MangaManager {
     }
 
     public CompleteManga getById(String id) {
-        MainMangaData main = Optional.ofNullable(repo.getById(id)).orElseThrow(() -> NoSuchMangaException.constructFromID(id));
-        List<LinkedMangaData> linked = repo.findAllByLinkedIdAndIdNot(main.getLinkedId(), main.getId());
+        MainMangaData main = Optional.ofNullable(repo.getByPublicIdAndOldFalse(id)).orElseThrow(() -> NoSuchMangaException.constructFromID(id));
+        List<LinkedMangaData> linked = repo.findAllByLinkedIdAndPublicIdNotAndOldFalse(main.getLinkedId(), main.getPublicId());
         return new CompleteManga(main, linked);
     }
 
     public WatchData getUrlById(String id){
-        return this.repo.getQwById(id);
+        return this.repo.getQwByPublicId(id);
     }
 
     public Manga getManga(String id) {
@@ -77,7 +80,7 @@ public class MangaManager {
     }
 
     public LinkedMangaData getPartById(String id) {
-        return repo.readById(id);
+        return repo.readByPublicIdAndOldFalse(id);
     }
 
     public boolean isAlreadyProcessed(String url) {
@@ -86,7 +89,7 @@ public class MangaManager {
 
     public String getId(String url) {
         MangaID id = repo.findByUrl(url);
-        return id == null ? null : id.getId();
+        return id == null ? null : id.getPublicId();
     }
 
     public Boolean isPrimary(String linkedId, Integer priority) {
@@ -114,7 +117,7 @@ public class MangaManager {
 //            repo.updateMainState(manga.getLinkedId());
 //        }
         Manga m = repo.saveAndFlush(manga);
-        MangaListing ls = listingManager.getByMangaId(m.getId());
+        MangaListing ls = listingManager.getByMangaId(m.getId(), m.getPublicId());
         ls.setName(m.getName());
         ls.setCoverURL(m.getCoverURL());
         ls.setDescriptionSmall(m.getDescription().substring(0, Math.min(m.getDescription().length(), 255)));
@@ -138,10 +141,15 @@ public class MangaManager {
 
     public void deleteManga(Manga manga) {
         this.priorities.get(manga.getLinkedId()).remove(manga.getSource().getPriority());
-        repo.deleteByUrl(manga.getUrl());
+//        repo.deleteByUrl(manga.getUrl());
         listingManager.deleteByMangaId(manga.getId());
+        repo.markForDeleteStageOne(manga.getId());
+        repo.markForDeleteStageTwo(manga.getId(), Utility.getID());
     }
 
+    public void deleteOlds() {
+        this.repo.deleteAllByOldTrue();
+    }
 
     public void deleteAll() {
     }

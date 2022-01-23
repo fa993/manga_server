@@ -218,7 +218,7 @@ public class MultiThreadScrapper {
         }
     }
 
-    @Scheduled(initialDelay = 1 * 60 * 1000,fixedRate = 24 * 60 * 60 * 1000)
+    @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void watchForExistence() throws InterruptedException, ExecutionException{
         if(this.running) {
             System.out.println("Currently Running so aborting watch");
@@ -316,9 +316,14 @@ public class MultiThreadScrapper {
         System.out.println("Done Watching");
     }
 
+    @Scheduled(initialDelay = 12 * 60 * 60 * 1000, fixedRate = 24 * 60 * 60 * 1000)
+    public void deleteOlds() {
+        this.mangaManager.deleteOlds();
+    }
+
     public void insertIfNotExists(String t, AtomicInteger c, AtomicInteger f, SourceScrapper sc) {
         if(!this.mangaManager.isAlreadyProcessed(t)){
-            parseAndInsert(f, t, sc);
+            doWatchSingle(t, sc.getSource().getId(), f);
         }
         c.incrementAndGet();
     }
@@ -463,8 +468,8 @@ public class MultiThreadScrapper {
                         return;
                     } else {
                         Manga m2 = parse(dto);
-                        m2.setId(m1.getId());
-                        m2.setMain(m1.isMain());
+                        m2.setPublicId(id);
+                        m2.setMain(m1.getMain());
                         Manga l = mangaManager.insert(m2);
                         System.out.println("Updated: " + dto.getPrimaryTitle());
                         if (!b) {
@@ -483,10 +488,10 @@ public class MultiThreadScrapper {
     }
 
     public void watchSingle(String t, String sourceId) {
-        this.watchService.submit(()->doWatchSingle(t, sourceId));
+        this.watchService.submit(()->doWatchSingle(t, sourceId, null));
     }
 
-    private void doWatchSingle(String t, String sourceId) {
+    private void doWatchSingle(String t, String sourceId, AtomicInteger f) {
 //        if(!this.mangaManager.isOld(System.currentTimeMillis(), ref2)) {
 //            System.out.println("Timeout not elapsed");
 //            return;
@@ -526,6 +531,9 @@ public class MultiThreadScrapper {
                     Manga m2 = parse(dto);
                     mangaManager.insert(m2);
                     System.out.println("Inserted " + dto.getPrimaryTitle());
+                    if(f != null) {
+                        f.incrementAndGet();
+                    }
                 } else {
                     Manga m1 = mangaManager.getManga(id);
                     boolean a = metadataEqualsOnly(m1, dto);
@@ -537,10 +545,13 @@ public class MultiThreadScrapper {
                         return;
                     } else {
                         Manga m2 = parse(dto);
-                        m2.setId(m1.getId());
-                        m2.setMain(m1.isMain());
+                        m2.setPublicId(m1.getPublicId());
+                        m2.setMain(m1.getMain());
                         Manga l = mangaManager.insert(m2);
                         System.out.println("Updated: " + dto.getPrimaryTitle());
+                        if(f != null) {
+                            f.incrementAndGet();
+                        }
                         if (!b) {
                             try {
                                 Message m = Message.builder().setTopic(l.getId()).setNotification(Notification.builder().setTitle("Manga Update").setBody(dto.getPrimaryTitle() + " has been updated").build()).build();
@@ -572,6 +583,7 @@ public class MultiThreadScrapper {
         m.setChapters(rec.getChapters().stream().map(Chapter::new).toList());
         m.setLinkedId(titleManager.add(rec.getTitles()));
         m.setLastWatchTime(System.currentTimeMillis());
+        m.setOld(false);
         return m;
     }
 

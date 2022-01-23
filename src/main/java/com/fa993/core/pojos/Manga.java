@@ -16,6 +16,9 @@ public class Manga {
     @Column(name = "manga_id")
     private String id;
 
+    @Column(name = "public_id")
+    private String publicId;
+
     @Column(name = "linked_id")
     private String linkedId;
 
@@ -83,11 +86,8 @@ public class Manga {
     @Column(name = "last_watch_time")
     private Long lastWatchTime;
 
-    public static Manga fromURL(String url) {
-        Manga m = new Manga();
-        m.setUrl(url);
-        return m;
-    }
+    @Column(name = "is_old")
+    private Boolean old;
 
     public Manga() {
     }
@@ -98,6 +98,14 @@ public class Manga {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
     }
 
     public String getLinkedId() {
@@ -204,7 +212,7 @@ public class Manga {
         this.status = status;
     }
 
-    public Boolean isMain() {
+    public Boolean getMain() {
         return main;
     }
 
@@ -220,10 +228,21 @@ public class Manga {
         this.lastWatchTime = lastWatchTime;
     }
 
+    public Boolean getOld() {
+        return old;
+    }
+
+    public void setOld(Boolean old) {
+        this.old = old;
+    }
+
     @PrePersist
     public void prePersist() {
         if (this.id == null) {
             this.id = Utility.getID();
+        }
+        if(this.publicId == null) {
+            this.publicId = Utility.getID();
         }
     }
 
@@ -231,6 +250,7 @@ public class Manga {
     public String toString() {
         return "Manga{" +
                 "id='" + id + '\'' +
+                ", publicId='" + publicId + '\'' +
                 ", linkedId='" + linkedId + '\'' +
                 ", name='" + name + '\'' +
                 ", coverURL='" + coverURL + '\'' +
@@ -246,6 +266,7 @@ public class Manga {
                 ", status='" + status + '\'' +
                 ", main=" + main +
                 ", lastWatchTime=" + lastWatchTime +
+                ", old=" + old +
                 '}';
     }
 }

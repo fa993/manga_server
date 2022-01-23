@@ -1,5 +1,7 @@
 package com.fa993.core.pojos;
 
+import com.fa993.core.dto.PageURL;
+import com.fa993.core.dto.PageURLImpl;
 import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
@@ -66,6 +68,10 @@ public class Page {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public PageURL toPageURL() {
+        return new PageURLImpl(this.url);
     }
 
     @Override

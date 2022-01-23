@@ -5,10 +5,8 @@ import com.fa993.core.exceptions.NoSuchMangaException;
 import com.fa993.core.managers.GenreManager;
 import com.fa993.core.managers.MangaListingManager;
 import com.fa993.core.managers.PageManager;
-import com.fa993.core.pojos.Manga;
-import com.fa993.core.pojos.MangaQuery;
+import com.fa993.core.pojos.*;
 import com.fa993.core.managers.MangaManager;
-import com.fa993.core.pojos.MangaQueryResponse;
 import com.fa993.retrieval.MultiThreadScrapper;
 import com.fa993.retrieval.SourceScrapper;
 import org.springframework.http.HttpStatus;
@@ -19,6 +17,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/public/manga")
@@ -46,16 +45,16 @@ public class MangaController {
     public CompleteManga getManga(@PathVariable(name = "id") String id) {
         CompleteManga m = this.mangaManager.getById(id);
         Long ref = System.currentTimeMillis();
-        WatchData dt = this.mangaManager.getUrlById(m.main().getId());
-        if(dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(dt.getLastWatchTime(), this.lastWatchesById.getOrDefault(m.main().getId(), 0L)))) {
+        WatchData dt = this.mangaManager.getUrlById(m.main().getPublicId());
+        if(dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, this.lastWatchesById.getOrDefault(m.main().getPublicId(), 0L))) {
             this.sct.watchSingle(dt.getUrl(), m.main().getSource().getId());
-            this.lastWatchesById.put(m.main().getId(), ref);
+            this.lastWatchesById.put(m.main().getPublicId(), ref);
         }
         for(LinkedMangaData ld : m.related()) {
-            WatchData dt0 = this.mangaManager.getUrlById(ld.getId());
-            if(dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(dt0.getLastWatchTime(), this.lastWatchesById.getOrDefault(ld.getId(), 0L)))) {
+            WatchData dt0 = this.mangaManager.getUrlById(ld.getPublicId());
+            if(dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, this.lastWatchesById.getOrDefault(ld.getPublicId(), 0L))) {
                 this.sct.watchSingle(dt0.getUrl(), ld.getSource().getId());
-                this.lastWatchesById.put(ld.getId(), ref);
+                this.lastWatchesById.put(ld.getPublicId(), ref);
             }
         }
         return m;

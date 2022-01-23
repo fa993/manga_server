@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface MainMangaData {
 
-    public String getId();
+    public String getPublicId();
 
     public String getLinkedId();
 

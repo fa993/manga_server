@@ -22,8 +22,8 @@ public class MangaListingManager {
     @PersistenceContext
     EntityManager manager;
 
-    public MangaListing getByMangaId(String mangaId) {
-        return repo.getByMangaId(mangaId).orElseGet(() -> new MangaListing(mangaId));
+    public MangaListing getByMangaId(String mangaId, String publicId) {
+        return repo.getByMangaId(mangaId).orElseGet(() -> new MangaListing(mangaId, publicId));
     }
 
     public long deleteByMangaId(String mangaId) {

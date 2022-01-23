@@ -15,6 +15,9 @@ public class MangaListing {
     @Column(name = "manga_id")
     private String mangaId;
 
+    @Column(name = "publicId")
+    private String publicId;
+
     @Column(name = "name")
     private String name;
 
@@ -30,17 +33,9 @@ public class MangaListing {
     public MangaListing() {
     }
 
-    public MangaListing(String mangaId) {
+    public MangaListing(String mangaId, String publicId) {
         this.mangaId = mangaId;
-    }
-
-    public MangaListing(Integer id, String mangaId, String name, String coverURL, String descriptionSmall, String genres) {
-        this.id = id;
-        this.mangaId = mangaId;
-        this.name = name;
-        this.coverURL = coverURL;
-        this.descriptionSmall = descriptionSmall;
-        this.genres = genres;
+        this.publicId = publicId;
     }
 
     public Integer getId() {
@@ -57,6 +52,14 @@ public class MangaListing {
 
     public void setMangaId(String mangaId) {
         this.mangaId = mangaId;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
     }
 
     public String getName() {
