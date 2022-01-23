@@ -160,6 +160,7 @@ public class MangaManager {
 
     public void deleteOlds() {
         this.repo.deleteAllByOldTrue();
+        this.repo.flush();
     }
 
     public void deleteAll() {
