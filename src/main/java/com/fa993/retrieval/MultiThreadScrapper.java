@@ -27,6 +27,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Component
 public class MultiThreadScrapper {
@@ -549,16 +550,17 @@ public class MultiThreadScrapper {
                         return;
                     } else {
                         Manga m2 = parse(dto);
+                        m2.setId(m1.getId());
                         m2.setPublicId(m1.getPublicId());
                         m2.setMain(m1.getMain());
-                        Manga l = mangaManager.insert(m2);
+                        mangaManager.updateManga(m2);
                         System.out.println("Updated: " + dto.getPrimaryTitle());
                         if(f != null) {
                             f.incrementAndGet();
                         }
                         if (!b) {
                             try {
-                                Message m = Message.builder().setTopic(l.getId()).setNotification(Notification.builder().setTitle("Manga Update").setBody(dto.getPrimaryTitle() + " has been updated").build()).build();
+                                Message m = Message.builder().setTopic(m2.getId()).setNotification(Notification.builder().setTitle("Manga Update").setBody(dto.getPrimaryTitle() + " has been updated").build()).build();
                                 FirebaseMessaging.getInstance().send(m);
                             } catch (FirebaseMessagingException e) {
                                 e.printStackTrace();
@@ -594,20 +596,28 @@ public class MultiThreadScrapper {
     private boolean metadataEqualsOnly(Manga m, MangaDTO md) {
         if(m == null || md == null) {
             logger.info("Null Manga Found");
+            return false;
         }
-        return m != null && md != null && m.getName().equals(md.getPrimaryTitle()) && m.getUrl().equals(md.getURL())
+        return m.getName().equals(md.getPrimaryTitle()) && m.getUrl().equals(md.getURL())
                 && m.getCoverURL().equals(md.getCoverURL()) && m.getDescription().equals(md.getDescription())
                 && m.getSource().equals(md.getSource()) && m.getStatus().equalsIgnoreCase(md.getStatus())
-                && listEquals(m.getGenres(), md.getGenres(), (g, s) -> g.getName().equalsIgnoreCase(s))
-                && listEquals(m.getAuthors(), md.getAuthors(), (a, s) -> a.getName().equalsIgnoreCase(s))
-                && listEquals(m.getArtists(), md.getArtists(), (a, s) -> a.getName().equalsIgnoreCase(s));
+                && m.getGenres().stream().map(t -> t.getName().toLowerCase()).collect(Collectors.toSet()).equals(md.getGenres().stream().map(String::toLowerCase).collect(Collectors.toSet()))
+                && m.getAuthors().stream().map(t -> t.getName().toLowerCase()).collect(Collectors.toSet()).equals(md.getAuthors().stream().map(String::toLowerCase).collect(Collectors.toSet()))
+                && m.getArtists().stream().map(t -> t.getName().toLowerCase()).collect(Collectors.toSet()).equals(md.getArtists().stream().map(String::toLowerCase).collect(Collectors.toSet()))
+//                && listEquals(m.getGenres(), md.getGenres(), (g, s) -> g.getName().equalsIgnoreCase(s))
+//                && listEquals(m.getAuthors(), md.getAuthors(), (a, s) -> a.getName().equalsIgnoreCase(s))
+//                && listEquals(m.getArtists(), md.getArtists(), (a, s) -> a.getName().equalsIgnoreCase(s))
+                ;
     }
 
     private boolean chapterListEqualsOnly(Manga m, MangaDTO md) {
         if(m == null || md == null) {
             logger.info("Null Manga Found");
+            return false;
         }
-        return m != null && md != null && listEquals(m.getChapters(), md.getChapters(), this::chapterEquals);
+        m.getChapters().sort(Comparator.comparingInt(Chapter::getSequenceNumber));
+        md.getChapters().sort(Comparator.comparingInt(ChapterDTO::getSequenceNumber));
+        return listEquals(m.getChapters(), md.getChapters(), this::chapterEquals);
     }
 
     private boolean chapterEquals(Chapter c, ChapterDTO cd) {
@@ -650,3 +660,4 @@ public class MultiThreadScrapper {
     }
 
 }
+

@@ -144,6 +144,19 @@ public class MangaManager {
         repo.markForDeleteStageTwo(manga.getUrl(), Utility.getID());
     }
 
+    public void updateManga(Manga m) {
+        MangaListing ls = listingManager.getByMangaId(m.getId(), m.getPublicId());
+        ls.setName(m.getName());
+        ls.setCoverURL(m.getCoverURL());
+        ls.setDescriptionSmall(m.getDescription().substring(0, Math.min(m.getDescription().length(), 255)));
+        StringBuilder sb1 = m.getGenres().stream().collect(StringBuilder::new, (sb, g) -> sb.append(StringUtils.capitalize(g.getName())).append(','), StringBuilder::append);
+        sb1.deleteCharAt(sb1.length() - 1);
+        ls.setGenres(sb1.toString());
+        listingManager.repo.saveAndFlush(ls);
+        this.repo.saveAndFlush(m);
+        detachManagedObjects();
+    }
+
     public void deleteOlds() {
         this.repo.deleteAllByOldTrue();
     }
