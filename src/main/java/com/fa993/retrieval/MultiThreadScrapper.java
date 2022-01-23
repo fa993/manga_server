@@ -588,7 +588,7 @@ public class MultiThreadScrapper {
     }
 
     private boolean metadataEqualsOnly(Manga m, MangaDTO md) {
-        return m.getName().equals(md.getPrimaryTitle()) && m.getUrl().equals(md.getURL())
+        return m != null && md != null && m.getName().equals(md.getPrimaryTitle()) && m.getUrl().equals(md.getURL())
                 && m.getCoverURL().equals(md.getCoverURL()) && m.getDescription().equals(md.getDescription())
                 && m.getSource().equals(md.getSource()) && m.getStatus().equalsIgnoreCase(md.getStatus())
                 && listEquals(m.getGenres(), md.getGenres(), (g, s) -> g.getName().equalsIgnoreCase(s))
@@ -601,7 +601,7 @@ public class MultiThreadScrapper {
     }
 
     private boolean chapterEquals(Chapter c, ChapterDTO cd) {
-        return c.getChapterName().equals(cd.getChapterName()) && c.getChapterNumber().equals(cd.getChapterNumber())
+        return c != null && cd != null && c.getChapterName().equals(cd.getChapterName()) && c.getChapterNumber().equals(cd.getChapterNumber())
                 && c.getSequenceNumber().equals(cd.getSequenceNumber())
                 && nullEquals(c.getUpdatedAt(), cd.getUpdatedAt(), (cx, cdx) -> nullEquals(cx.toInstant(), cdx, Instant::equals))
                 && listEquals(c.getImagesURL(), cd.getImagesURL(), (p, s) -> p.getUrl().equals(s));
