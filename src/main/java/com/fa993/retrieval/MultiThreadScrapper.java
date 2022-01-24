@@ -45,6 +45,7 @@ public class MultiThreadScrapper {
     private final GenreManager genreManager;
     private final PageManager pageManager;
     private final TitleManager titleManager;
+    private final ChapterManager chapterManager;
 
     private final ProblemChildManager problemChildManager;
 
@@ -55,7 +56,7 @@ public class MultiThreadScrapper {
     private ExecutorService watchService;
 
     public MultiThreadScrapper(MangaManager mangaManager, SourceManager sourceManager, AuthorManager authorManager,
-                               GenreManager genreManager, PageManager pageManager, TitleManager titleManager,
+                               GenreManager genreManager, PageManager pageManager, TitleManager titleManager, ChapterManager chapterManager,
                                ProblemChildManager problemChildManager) {
         genreManager.registerError("not available");
         this.mangaManager = mangaManager;
@@ -64,6 +65,7 @@ public class MultiThreadScrapper {
         this.genreManager = genreManager;
         this.pageManager = pageManager;
         this.titleManager = titleManager;
+        this.chapterManager = chapterManager;
         this.problemChildManager = problemChildManager;
         this.runThreads = 4;//32
         this.watchThreads = 4;//32
@@ -557,6 +559,16 @@ public class MultiThreadScrapper {
                         m2.setId(m1.getId());
                         m2.setPublicId(m1.getPublicId());
                         m2.setMain(m1.getMain());
+                        m1.getChapters().sort(Comparator.comparingInt(Chapter::getSequenceNumber));
+                        m2.getChapters().sort(Comparator.comparingInt(Chapter::getSequenceNumber));
+                        if(m2.getChapters().size() < m1.getChapters().size()) {
+                            //supremely rare case
+                            //delete extra chapters
+                            this.chapterManager.deleteChaps(m1.getChapters().subList(m2.getChapters().size(), m1.getChapters().size()).stream().map(Chapter::getId).toList());
+                        }
+                        for(int i = 0; i < Math.min(m2.getChapters().size(), m1.getChapters().size()); i++) {
+                            m2.getChapters().get(i).setId(m1.getChapters().get(i).getId());
+                        }
                         mangaManager.updateManga(m2);
                         System.out.println("Updated: " + dto.getPrimaryTitle());
                         if(f != null) {

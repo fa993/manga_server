@@ -9,6 +9,8 @@ import java.util.UUID;
 import javax.persistence.*;
 
 import com.fa993.retrieval.pojos.ChapterDTO;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 @Table(name = "chapter")
@@ -30,7 +32,8 @@ public class Chapter {
 	@Column(name = "chapter_number")
 	private String chapterNumber;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "chapter_id", referencedColumnName = "chapter_id")
 	private List<Page> imagesURL;
 

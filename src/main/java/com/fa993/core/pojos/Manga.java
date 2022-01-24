@@ -40,7 +40,8 @@ public class Manga {
     @JoinColumn(name = "source_id", referencedColumnName = "source_id")
     private Source source;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "manga_id", referencedColumnName = "manga_id")
     private List<Chapter> chapters;
 
