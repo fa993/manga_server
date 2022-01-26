@@ -602,7 +602,7 @@ public class MultiThreadScrapper {
         m.setGenres(rec.getGenres().stream().map(t -> genreManager.getGenre(t == null ? null : t.toLowerCase())).toList());
         m.setAuthors(rec.getAuthors().stream().map(t -> authorManager.getAuthor(t.toLowerCase())).toList());
         m.setArtists(rec.getArtists().stream().map(t -> authorManager.getAuthor(t.toLowerCase())).toList());
-        m.setChapters(rec.getChapters().stream().map(Chapter::new).toList());
+        m.setChapters(rec.getChapters().stream().map(Chapter::new).collect(ArrayList::new, List::add, List::addAll));
         m.setLinkedId(titleManager.add(rec.getTitles()));
         m.setLastWatchTime(System.currentTimeMillis());
         m.setOld(false);
