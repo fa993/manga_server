@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -559,15 +560,23 @@ public class MultiThreadScrapper {
                         m2.setId(m1.getId());
                         m2.setPublicId(m1.getPublicId());
                         m2.setMain(m1.getMain());
-                        m1.getChapters().sort(Comparator.comparingInt(Chapter::getSequenceNumber));
-                        m2.getChapters().sort(Comparator.comparingInt(Chapter::getSequenceNumber));
-                        if(m2.getChapters().size() < m1.getChapters().size()) {
-                            //supremely rare case
-                            //delete extra chapters
-                            this.chapterManager.deleteChaps(m1.getChapters().subList(m2.getChapters().size(), m1.getChapters().size()).stream().map(Chapter::getId).toList());
+                        Map<Integer, Chapter> m1Map = m1.getChapters().stream().collect(Collectors.toMap(Chapter::getSequenceNumber, Function.identity()));
+                        Map<Integer, Chapter> m2Map = m2.getChapters().stream().collect(Collectors.toMap(Chapter::getSequenceNumber, Function.identity()));
+//                        if(m2Map.size() < m1Map.size()) {
+//                            //supremely rare case
+//                            //delete extra chapters
+//                            Map<Integer, Chapter> m1MapDup = m1.getChapters().stream().collect(Collectors.toMap(Chapter::getSequenceNumber, Function.identity()));
+//                            m2Map.keySet().forEach(m1MapDup::remove);
+//                            this.chapterManager.deleteChaps(m1MapDup.values().stream().map(Chapter::getId).toList());
+//                        }
+                        for(Map.Entry<Integer, Chapter> entry: m1Map.entrySet()) {
+                            Chapter c2 = m2Map.get(entry.getKey());
+                            if(c2 != null) {
+                                c2.setId(entry.getValue().getId());
+                            }
                         }
-                        for(int i = 0; i < Math.min(m2.getChapters().size(), m1.getChapters().size()); i++) {
-                            m2.getChapters().get(i).setId(m1.getChapters().get(i).getId());
+                        for(int i = 0; i < m2.getChapters().size(); i++) {
+                            m2.getChapters().get(i).setMangaId(m2.getId());
                         }
                         mangaManager.updateManga(m2);
                         System.out.println("Updated: " + dto.getPrimaryTitle());
@@ -631,9 +640,12 @@ public class MultiThreadScrapper {
             logger.info("Null Manga Found");
             return false;
         }
-        m.getChapters().sort(Comparator.comparingInt(Chapter::getSequenceNumber));
-        md.getChapters().sort(Comparator.comparingInt(ChapterDTO::getSequenceNumber));
-        return listEquals(m.getChapters(), md.getChapters(), this::chapterEquals);
+        Map<Integer, Chapter> m1 = m.getChapters().stream().collect(Collectors.toMap(Chapter::getSequenceNumber, Function.identity()));
+        Map<Integer, ChapterDTO> m2 = md.getChapters().stream().collect(Collectors.toMap(ChapterDTO::getSequenceNumber, Function.identity()));
+//        m.getChapters().sort(Comparator.comparingInt(Chapter::getSequenceNumber));
+//        md.getChapters().sort(Comparator.comparingInt(ChapterDTO::getSequenceNumber));
+//        return listEquals(m.getChapters(), md.getChapters(), this::chapterEquals);
+        return mapEquals(m1, m2, this::chapterEquals);
     }
 
     private boolean chapterEquals(Chapter c, ChapterDTO cd) {
@@ -665,6 +677,25 @@ public class MultiThreadScrapper {
             }
             for (int i = 0; i < firstList.size(); i++) {
                 if (!equality.test(firstList.get(i), secondList.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    private <T, U> boolean mapEquals(Map<?, T> firstMap, Map<?, U> secondMap, BiPredicate<T, U> equality) {
+        try {
+            if (firstMap.size() != secondMap.size()) {
+                return false;
+            }
+            for(Map.Entry<?, T> t1 : firstMap.entrySet()) {
+                T obj1 = t1.getValue();
+                U obj2 = secondMap.get(t1.getKey());
+                if(!equality.test(obj1, obj2)) {
                     return false;
                 }
             }

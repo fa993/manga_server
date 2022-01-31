@@ -154,7 +154,7 @@ public class MangaManager {
         sb1.deleteCharAt(sb1.length() - 1);
         ls.setGenres(sb1.toString());
         listingManager.save(ls);
-        this.repo.saveAndFlush(m);
+        Manga l2 = this.repo.saveAndFlush(m);
         detachManagedObjects();
     }
 
