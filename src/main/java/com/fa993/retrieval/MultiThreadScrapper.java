@@ -4,7 +4,6 @@ import com.fa993.core.exceptions.MangaFetchingException;
 import com.fa993.core.managers.*;
 import com.fa993.core.pojos.Chapter;
 import com.fa993.core.pojos.Manga;
-import com.fa993.core.pojos.Source;
 import com.fa993.retrieval.pojos.*;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -14,9 +13,7 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -27,7 +24,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Component
@@ -228,7 +224,7 @@ public class MultiThreadScrapper {
 
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void watchForExistence() throws InterruptedException, ExecutionException{
-        this.deleteOlds();
+        this.deleteOldsAndOrphaned();
         if(this.running) {
             System.out.println("Currently Running so aborting watch");
             return;
@@ -325,8 +321,9 @@ public class MultiThreadScrapper {
         System.out.println("Done Watching");
     }
 
-    public void deleteOlds() {
+    public void deleteOldsAndOrphaned() {
         this.mangaManager.deleteOlds();
+        this.chapterManager.deleteOrphaned();
     }
 
     private void insertIfNotExists(String t, AtomicInteger c, AtomicInteger f, SourceScrapper sc) {

@@ -18,4 +18,8 @@ public class ChapterManager {
         this.repo.deleteByIdIn(ids);
     }
 
+    public void deleteOrphaned() {
+        this.repo.deleteByMangaIdIsNull();
+    }
+
 }

@@ -9,4 +9,6 @@ public interface ChapterRepository extends JpaRepository<Chapter, String> {
 
     public void deleteByIdIn(Collection<String> ids);
 
+    public void deleteByMangaIdIsNull();
+
 }

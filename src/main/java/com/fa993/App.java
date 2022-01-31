@@ -29,6 +29,6 @@ public class App implements ApplicationRunner {
         FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.getApplicationDefault()).build();
         FirebaseApp.initializeApp(options); //will test on compute engine
 //        scp.run();
-        scp.deleteOlds();
+//        scp.deleteOldsAndOrphaned();
     }
 }
