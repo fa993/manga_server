@@ -25,10 +25,14 @@ public class App implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        System.out.println(System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));
-        FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.getApplicationDefault()).build();
-        FirebaseApp.initializeApp(options); //will test on compute engine
+        try {
+            System.out.println(System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));
+            FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.getApplicationDefault()).build();
+            FirebaseApp.initializeApp(options); //will test on compute engine
 //        scp.run();
 //        scp.deleteOldsAndOrphaned();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
