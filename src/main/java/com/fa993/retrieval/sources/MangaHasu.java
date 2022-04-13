@@ -10,6 +10,7 @@ import com.fa993.retrieval.pojos.ChapterDTO;
 import com.fa993.retrieval.pojos.MangaDTO;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -22,26 +23,27 @@ import java.util.*;
 import java.util.function.Consumer;
 
 @Scrapper
-public class ReadM implements SourceScrapper {
+public class MangaHasu implements SourceScrapper {
 
-    private static final String WEBSITE_HOST = "https://readm.org";
+    private static final String WEBSITE_HOST = "https://mangahasu.se";
 
-    private static final String SEARCH_ALL = WEBSITE_HOST + "/manga-list";
-    private static final String ALL_GENRE = WEBSITE_HOST + "/advanced-search";
+    private static final String SEARCH_ALL = WEBSITE_HOST + "/directory.html";
+    private static final String ALL_GENRE = WEBSITE_HOST + "/";
 
-    private static final String WATCH = WEBSITE_HOST + "/latest-releases";
+    private static final String WATCH = WEBSITE_HOST + "/latest-releases.html";
 
     private static final Integer TOTAL_PAGES = 27;
+    private static final int NO_OF_PAGES_TO_WATCH = 10;
 
-    private static final DateTimeFormatter DTF = new DateTimeFormatterBuilder().appendPattern("dd MMMM yyyy")
+    private static final DateTimeFormatter DTF = new DateTimeFormatterBuilder().appendPattern("MMM dd, yyyy")
             .parseDefaulting(ChronoField.NANO_OF_DAY, 0).toFormatter().withZone(ZoneId.systemDefault());
 
     private final Source s;
 
-    private Integer noOfPagesToWatch;
+    private static final Set<String> EMPTY_SET = new HashSet<>();
 
-    public ReadM(SourceManager manager) {
-        this.s = manager.getSource("readm", 1);
+    public MangaHasu(SourceManager manager) {
+        this.s = manager.getSource("mangahasu", 3);
     }
 
     @Override
@@ -52,43 +54,44 @@ public class ReadM implements SourceScrapper {
         mndt.setURL(url);
         mndt.setDescription("");
         mndt.setSource(s);
-        Set<String> restrictedNames = new HashSet<>();
-        restrictedNames.add("N/A");
         try {
             Document doc = Jsoup.connect(url).get();
-            Optional.ofNullable(doc.selectFirst("h1.page-title")).map(t -> t.text().strip()).ifPresentOrElse(t -> {
+            Optional.ofNullable(doc.selectFirst("div.info-title > h1")).map(t -> t.text().strip()).ifPresentOrElse(t -> {
                 mndt.setPrimaryTitle(t);
                 mndt.getTitles().add(t);
             }, () -> {
                 throw new RuntimeException("No Title Found");
             });
-            Optional.ofNullable(doc.selectFirst("img.series-profile-thumb"))
+            Optional.ofNullable(doc.selectFirst("div.info-img > img"))
                     .ifPresentOrElse(t -> mndt.setCoverURL(t.attr("abs:src")), () -> {
                         throw new RuntimeException("No Cover Url Found");
                     });
-            Optional.ofNullable(doc.selectFirst("div.sub-title"))
-                    .ifPresent(t -> extractWithTrim(t.text(), mndt.getTitles(), restrictedNames, ',', ';'));
-            Optional.ofNullable(doc.selectFirst("div.series-summary-wrapper")).ifPresent(t -> {
-                t.getElementsByTag("p").forEach(f -> mndt.setDescription(mndt.getDescription() + f.text()));
+            Optional.ofNullable(doc.selectFirst("div.info-title > h3"))
+                    .ifPresent(t -> extractWithTrim(t.text(), mndt.getTitles(), EMPTY_SET, ',', ';'));
+            Optional.ofNullable(doc.selectFirst("div.content-info p")).ifPresent(t -> {
+                mndt.setDescription(mndt.getDescription() + t.text());
                 mndt.setDescription(mndt.getDescription().strip());
-                t.getElementsByTag("a").stream().map(y -> y.text().strip()).forEach(f -> {
-                    if (!f.equalsIgnoreCase("Uncategorized")) {
-                        mndt.getGenres().add(f);
-                    } else {
-                        mndt.getGenres().add(null);
-                    }
-                });
             });
-            Optional.ofNullable(doc.selectFirst("series-status")).ifPresentOrElse(t -> mndt.setStatus(t.text()),
+            Optional.ofNullable(doc.selectFirst("div.box-des")).ifPresentOrElse(t -> {
+                    Elements ele = t.getElementsByClass("info");
+                    if(ele.size() > 0) {
+                        mndt.getAuthors().add(ele.get(0).text().strip());
+                    }
+                    if(ele.size() > 1) {
+                        mndt.getArtists().add(ele.get(1).text().strip());
+                    }
+                    if(ele.size() > 3) {
+                        ele.get(3).getElementsByTag("a").eachText().stream().map(String::strip).forEach(mndt.getGenres()::add);
+                    }
+                    if(ele.size() > 4) {
+                        mndt.setStatus(ele.get(4).text().strip());
+                    }
+                },
                     () -> mndt.setStatus("Not Available"));
-            Optional.ofNullable(doc.selectFirst("span.first-episode > a"))
-                    .ifPresent(t -> mndt.getAuthors().add(t.text().strip()));
-            Optional.ofNullable(doc.selectFirst("span.last-episode > a"))
-                    .ifPresent(t -> mndt.getArtists().add(t.text().strip()));
-            Elements ls = doc.select("td.table-episodes-title a");
+            Elements ls = doc.select("table.table td.name");
             for (int i = 0; i < ls.size(); i++) {
                 try {
-                    mndt.getChapters().add(getChapter(ls.size() - i - 1, ls.get(i).attr("abs:href")));
+                    mndt.getChapters().add(getChapter(ls.size() - i - 1, ls.get(i).selectFirst("a").attr("abs:href"), ls.get(i).selectFirst("td.date-updated").text().strip()));
                 } catch (Exception ex) {
                     e = ex;
                     error = true;
@@ -104,17 +107,16 @@ public class ReadM implements SourceScrapper {
         return mndt;
     }
 
-    public ChapterDTO getChapter(Integer sequenceNumber, String url) throws Exception {
+    public ChapterDTO getChapter(Integer sequenceNumber, String url, String updatedAt) throws Exception {
         ChapterDTO cdto = new ChapterDTO();
         cdto.setChapterName("");
-        cdto.setChapterNumber("");
+        cdto.setChapterNumber(Integer.toString(sequenceNumber + 1));
         cdto.setSequenceNumber(sequenceNumber);
+        cdto.setUpdatedAt(DTF.parse(updatedAt, Instant::from));
         Document doc = Jsoup.connect(url).get();
-        Optional.ofNullable(doc.selectFirst("div.media-date"))
-                .ifPresent(t -> cdto.setUpdatedAt(DTF.parse(t.text(), Instant::from)));
-        Optional.ofNullable(doc.selectFirst("span.light-title"))
-                .ifPresent(t -> cdto.setChapterNumber(t.text().substring(8).strip()));
-        doc.select("img.img-responsive").forEach(t -> cdto.getImagesURL().add(t.attr("abs:src")));
+        Optional.ofNullable(doc.selectFirst("span[itemprop]"))
+                .ifPresent(t -> cdto.setChapterNumber(t.text().strip()));
+        doc.select("div.img > img").forEach(t -> cdto.getImagesURL().add(t.attr("abs:src")));
         return cdto;
     }
 
@@ -131,8 +133,8 @@ public class ReadM implements SourceScrapper {
     @Override
     public List<String> getLiterallyEveryLink(int x) throws PageProcessingException {
         try {
-            Document doc = Jsoup.connect(SEARCH_ALL + "/" + ((x == 1) ? "" : (char) (x + 95))).get();
-            return doc.select("div.poster-xs > a").stream().map(t -> t.attr("abs:href")).toList();
+            Document doc = Jsoup.connect(SEARCH_ALL + "?alphabet=" + ((x == 1) ? "." : (char) (x + 63))).get();
+            return doc.select("ul.list_manga div.wrapper_imgage > a").stream().map(t -> t.attr("abs:href")).toList();
         } catch (IOException e) {
             throw new PageProcessingException(x, this.getSource(), e);
         }
@@ -140,19 +142,19 @@ public class ReadM implements SourceScrapper {
 
     @Override
     public void reloadWatchPages() {
-        this.noOfPagesToWatch = loadElement();
+        //DO NOTHING
     }
 
     @Override
     public Integer getNumberOfPagesToWatch() {
-        return this.noOfPagesToWatch;
+        return NO_OF_PAGES_TO_WATCH;
     }
 
     @Override
     public List<String> watch(int x) throws PageProcessingException {
         try{
-            Document doc = Jsoup.connect(WATCH + "/" + x).get();
-            return doc.select("h2.truncate > a").stream().map(t -> t.attr("abs:href")).toList();
+            Document doc = Jsoup.connect(WATCH + "?page=" + x).get();
+            return doc.select("ul.list_manga div.wrapper_imgage > a").stream().map(t -> t.attr("abs:href")).toList();
         }catch (IOException ex){
             throw new PageProcessingException(x, this.getSource(), ex);
         }
@@ -168,27 +170,14 @@ public class ReadM implements SourceScrapper {
         final List<String> ls = new ArrayList<>();
         try {
             Document doc = Jsoup.connect(ALL_GENRE).get();
-            doc.select("ul.advanced-search-categories")
+            doc.select("ul.dropdown-menu")
                     .forEach(t -> t.getElementsByTag("li").stream().map(f -> f.text().strip()).forEach(p -> {
-                        if (!p.equalsIgnoreCase("Uncategorized")) {
-                            ls.add(p);
-                        }
+                        ls.add(p);
                     }));
         } catch (IOException e) {
             e.printStackTrace();
         }
         return ls;
-    }
-
-    private Integer loadElement() {
-        Integer ret = null;
-        try {
-            Document doc = Jsoup.connect(WATCH).get();
-            ret = Integer.parseInt(doc.select("div.pagination a").last().attr("href").substring(17));
-        } catch (IOException ex){
-            ex.printStackTrace();
-        }
-        return ret;
     }
 
 }

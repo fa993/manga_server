@@ -45,6 +45,8 @@ public class Manganelo implements SourceScrapper {
 	private static final String ALL_GENRE = "https://manganelo.com/genre-all";
 	private static final String WATCH = "https://manganelo.com/";
 
+	private static final Set<String> EMPTY_SET = new HashSet<>();
+
 	private Integer completeNoOfPages;
 
 	public Manganelo(SourceManager m) {
@@ -73,7 +75,6 @@ public class Manganelo implements SourceScrapper {
 		mndt.setURL(url);
 		mndt.setDescription("");
 		mndt.setSource(s);
-		Set<String> empty = new HashSet<>();
 		try {
 			Document el = Jsoup.connect(url).get();
 			Optional.ofNullable(el.selectFirst("div.story-info-right > h1")).map(t -> t.text().strip())
@@ -91,10 +92,10 @@ public class Manganelo implements SourceScrapper {
 			Elements values = el.select("td.table-value");
 			for (int i = 0; i < labels.size(); i++) {
 				switch (labels.get(i).text()) {
-				case AUTHOR -> extractWithTrim(values.get(i).text(), mndt.getAuthors(), empty, '-');
-				case ALTERNATIVE_NAME -> extractWithTrim(values.get(i).text(), mndt.getTitles(), empty, ',', ';');
+				case AUTHOR -> extractWithTrim(values.get(i).text(), mndt.getAuthors(), EMPTY_SET, '-');
+				case ALTERNATIVE_NAME -> extractWithTrim(values.get(i).text(), mndt.getTitles(), EMPTY_SET, ',', ';');
 				case STATUS -> mndt.setStatus(values.get(i).text().toUpperCase());
-				case GENRES -> extractWithTrim(values.get(i).text(), mndt.getGenres(), empty, '-');
+				case GENRES -> extractWithTrim(values.get(i).text(), mndt.getGenres(), EMPTY_SET, '-');
 				default -> System.out.println("Not recognized");
 				}
 			}
@@ -144,7 +145,7 @@ public class Manganelo implements SourceScrapper {
 				cdt.setSequenceNumber(ls.size() - i - 1);
 				Optional.ofNullable(t2.attr("title")).ifPresent(t -> cdt.setUpdatedAt(FMTC.parse(t, Instant::from)));
 				try {
-					cdt.setImagesURL(getImages(t1.attr("abs:href"), url));
+					cdt.setImagesURL(getImages(t1.attr("abs:href")));
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					error = true;
@@ -162,7 +163,7 @@ public class Manganelo implements SourceScrapper {
 		return mndt;
 	}
 
-	private List<String> getImages(String url, String mURL) throws Exception {
+	private List<String> getImages(String url) throws Exception {
 		return Jsoup.connect(url).get().select("div.container-chapter-reader > img").stream().map(t -> t.attr("src"))
 				.toList();
 	}
@@ -215,14 +216,13 @@ public class Manganelo implements SourceScrapper {
 	@Override
 	public List<String> getAllGenre() {
 		List<String> output = new ArrayList<>();
-		Document doc = null;
 		try {
-			doc = Jsoup.connect(ALL_GENRE).get();
+			Document doc = Jsoup.connect(ALL_GENRE).get();
+			for (Element t : doc.select("div.advanced-search-tool-genres-list > span")) {
+				output.add(t.text().toLowerCase());
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		for (Element t : doc.select("div.advanced-search-tool-genres-list > span")) {
-			output.add(t.text().toLowerCase());
 		}
 		return output;
 	}
