@@ -60,6 +60,26 @@ public class MangaController {
         return m;
     }
 
+    @PostMapping("/refresh")
+    public void refreshAll(@RequestBody List<String> ids) {
+        Long ref = System.currentTimeMillis();
+        for(String id: ids) {
+            CompleteManga m = this.mangaManager.getById(id);
+            WatchData dt = this.mangaManager.getUrlById(m.main().getId());
+            if (dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(m.main().getId(), 0L), dt.getLastWatchTime()))) {
+                this.sct.watchSingle(dt.getUrl(), m.main().getSource().getId());
+                this.lastWatchesById.put(m.main().getId(), ref);
+            }
+            for (LinkedMangaData ld : m.related()) {
+                WatchData dt0 = this.mangaManager.getUrlById(ld.getId());
+                if (dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(ld.getId(), 0L), dt0.getLastWatchTime()))) {
+                    this.sct.watchSingle(dt0.getUrl(), ld.getSource().getId());
+                    this.lastWatchesById.put(ld.getId(), ref);
+                }
+            }
+        }
+    }
+
     @GetMapping("/part/{id}")
     public LinkedMangaData getPart(@PathVariable(name = "id") String id) {
         return this.mangaManager.getPartById(id);
