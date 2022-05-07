@@ -5,7 +5,10 @@ import com.fa993.core.exceptions.NoSuchMangaException;
 import com.fa993.core.pojos.Manga;
 import com.fa993.core.pojos.MangaListing;
 import com.fa993.core.repositories.MangaRepository;
+import com.fa993.retrieval.MultiThreadScrapper;
 import com.fa993.utils.Utility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

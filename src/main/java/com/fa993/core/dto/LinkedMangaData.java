@@ -19,4 +19,6 @@ public interface LinkedMangaData {
 
     public Timestamp getLastUpdated();
 
+    public String getStatus();
+
 }

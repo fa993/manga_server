@@ -9,6 +9,8 @@ import com.fa993.core.pojos.*;
 import com.fa993.core.managers.MangaManager;
 import com.fa993.retrieval.MultiThreadScrapper;
 import com.fa993.retrieval.SourceScrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @RestController
 @RequestMapping("/public/manga")
 public class MangaController {
+
+    Logger logger = LoggerFactory.getLogger(MangaManager.class);
 
     public MangaManager mangaManager;
     public PageManager pageManager;
@@ -64,17 +68,22 @@ public class MangaController {
     public void refreshAll(@RequestBody List<String> ids) {
         Long ref = System.currentTimeMillis();
         for(String id: ids) {
+            logger.debug("Queued: " + id);
             CompleteManga m = this.mangaManager.getById(id);
             WatchData dt = this.mangaManager.getUrlById(m.main().getId());
-            if (dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(m.main().getId(), 0L), dt.getLastWatchTime()))) {
+            if (dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(m.main().getId(), 0L), dt.getLastWatchTime())) && !isCompleted(m.main().getStatus())) {
                 this.sct.watchSingle(dt.getUrl(), m.main().getSource().getId());
                 this.lastWatchesById.put(m.main().getId(), ref);
+            } else {
+                logger.debug("Skipped: " + id);
             }
             for (LinkedMangaData ld : m.related()) {
                 WatchData dt0 = this.mangaManager.getUrlById(ld.getId());
-                if (dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(ld.getId(), 0L), dt0.getLastWatchTime()))) {
+                if (dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(ld.getId(), 0L), dt0.getLastWatchTime())) && !isCompleted(ld.getStatus())) {
                     this.sct.watchSingle(dt0.getUrl(), ld.getSource().getId());
                     this.lastWatchesById.put(ld.getId(), ref);
+                } else {
+                    logger.debug("Skipped: " + id);
                 }
             }
         }
@@ -116,5 +125,10 @@ public class MangaController {
     public String invalidId(NoSuchMangaException ex) {
         return ex.getResponseBody();
     }
+
+    private boolean isCompleted(String status) {
+        return status.toLowerCase().contains("completed");
+    }
+
 
 }

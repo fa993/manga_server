@@ -185,8 +185,9 @@ public class ReadM implements SourceScrapper {
         try {
             Document doc = Jsoup.connect(WATCH).get();
             ret = Integer.parseInt(doc.select("div.pagination a").last().attr("href").substring(17));
-        } catch (IOException ex){
+        } catch (Exception ex){
             ex.printStackTrace();
+            ret = 0;
         }
         return ret;
     }
