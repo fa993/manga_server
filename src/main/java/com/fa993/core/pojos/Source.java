@@ -2,8 +2,11 @@ package com.fa993.core.pojos;
 
 import com.fa993.utils.Utility;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,17 +23,19 @@ public class Source {
     @Column(name = "priority")
     private Integer priority;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "source_id")
+    private List<SourcePattern> patterns;
+
     public Source() {
     }
 
-    public Source(String id, String name, int priority) {
-        this.id = id;
+    public Source(String name, int priority, List<SourcePattern> patterns){
+        this.id = null;
         this.name = name;
         this.priority = priority;
-    }
-
-    public Source(String name, int priority){
-        this(null, name, priority);
+        this.patterns = patterns;
     }
 
     public String getId() {
@@ -55,6 +60,14 @@ public class Source {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
+    }
+
+    public List<SourcePattern> getPatterns() {
+        return patterns;
+    }
+
+    public void setPatterns(List<SourcePattern> patterns) {
+        this.patterns = patterns;
     }
 
     @PrePersist

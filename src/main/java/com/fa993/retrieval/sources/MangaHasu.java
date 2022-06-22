@@ -4,6 +4,7 @@ import com.fa993.core.exceptions.MangaFetchingException;
 import com.fa993.core.exceptions.PageProcessingException;
 import com.fa993.core.managers.SourceManager;
 import com.fa993.core.pojos.Source;
+import com.fa993.core.pojos.SourcePattern;
 import com.fa993.retrieval.Scrapper;
 import com.fa993.retrieval.SourceScrapper;
 import com.fa993.retrieval.pojos.ChapterDTO;
@@ -22,7 +23,7 @@ import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.function.Consumer;
 
-//@Scrapper
+@Scrapper
 public class MangaHasu implements SourceScrapper {
 
     private static final String WEBSITE_HOST = "https://mangahasu.se";
@@ -44,7 +45,7 @@ public class MangaHasu implements SourceScrapper {
     private static final Set<String> EMPTY_SET = new HashSet<>();
 
     public MangaHasu(SourceManager manager) {
-        this.s = manager.getSource("mangahasu", 3);
+        this.s = manager.getSource("mangahasu", 3, new String[] {});
     }
 
     @Override

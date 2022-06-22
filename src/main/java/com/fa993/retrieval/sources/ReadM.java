@@ -4,6 +4,7 @@ import com.fa993.core.exceptions.MangaFetchingException;
 import com.fa993.core.exceptions.PageProcessingException;
 import com.fa993.core.managers.SourceManager;
 import com.fa993.core.pojos.Source;
+import com.fa993.core.pojos.SourcePattern;
 import com.fa993.retrieval.Scrapper;
 import com.fa993.retrieval.SourceScrapper;
 import com.fa993.retrieval.pojos.ChapterDTO;
@@ -41,7 +42,7 @@ public class ReadM implements SourceScrapper {
     private Integer noOfPagesToWatch;
 
     public ReadM(SourceManager manager) {
-        this.s = manager.getSource("readm", 1);
+        this.s = manager.getSource("readm", 1, new String[] {"https://readm.org/"});
     }
 
     @Override

@@ -2,16 +2,14 @@ package com.fa993.networking.controllers;
 
 import com.fa993.core.dto.*;
 import com.fa993.core.exceptions.NoSuchMangaException;
-import com.fa993.core.managers.GenreManager;
-import com.fa993.core.managers.MangaListingManager;
-import com.fa993.core.managers.PageManager;
+import com.fa993.core.managers.*;
 import com.fa993.core.pojos.*;
-import com.fa993.core.managers.MangaManager;
 import com.fa993.retrieval.MultiThreadScrapper;
 import com.fa993.retrieval.SourceScrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -31,16 +29,18 @@ public class MangaController {
     public PageManager pageManager;
     public GenreManager genreManager;
     public MangaListingManager listingManager;
+    public SourceManager sourceManager;
 
     public MultiThreadScrapper sct;
 
     private Map<String, Long> lastWatchesById;
 
-    public MangaController(MangaManager repo1, PageManager repo2, GenreManager repo3, MangaListingManager repo4, MultiThreadScrapper sc) {
+    public MangaController(MangaManager repo1, PageManager repo2, GenreManager repo3, MangaListingManager repo4, SourceManager repo5, MultiThreadScrapper sc) {
         this.mangaManager = repo1;
         this.pageManager = repo2;
         this.genreManager = repo3;
         this.listingManager = repo4;
+        this.sourceManager = repo5;
         this.sct = sc;
         this.lastWatchesById = new HashMap<>();
     }
@@ -71,19 +71,20 @@ public class MangaController {
             logger.debug("Queued: " + id);
             CompleteManga m = this.mangaManager.getById(id);
             WatchData dt = this.mangaManager.getUrlById(m.main().getId());
-            if (dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(m.main().getId(), 0L), dt.getLastWatchTime())) && !isCompleted(m.main().getStatus())) {
+            if(isCompleted(m.main().getStatus())) {
+                logger.debug("Skipped: " + id);
+            }
+            else if (dt.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(m.main().getId(), 0L), dt.getLastWatchTime()))) {
                 this.sct.watchSingle(dt.getUrl(), m.main().getSource().getId());
                 this.lastWatchesById.put(m.main().getId(), ref);
-            } else {
-                logger.debug("Skipped: " + id);
             }
             for (LinkedMangaData ld : m.related()) {
                 WatchData dt0 = this.mangaManager.getUrlById(ld.getId());
-                if (dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(ld.getId(), 0L), dt0.getLastWatchTime())) && !isCompleted(ld.getStatus())) {
+                if(isCompleted(ld.getStatus())) {
+                    logger.debug("Skipped: " + id);
+                } else if (dt0.getLastWatchTime() == null || this.mangaManager.isOld(ref, Math.max(this.lastWatchesById.getOrDefault(ld.getId(), 0L), dt0.getLastWatchTime()))) {
                     this.sct.watchSingle(dt0.getUrl(), ld.getSource().getId());
                     this.lastWatchesById.put(ld.getId(), ref);
-                } else {
-                    logger.debug("Skipped: " + id);
                 }
             }
         }
@@ -117,6 +118,16 @@ public class MangaController {
     @PostMapping("/home")
     public MangaQueryResponse getHomePage(@RequestBody MangaQuery query) {
         return new MangaQueryResponse(query, listingManager.getHome(query));
+    }
+
+    @GetMapping("/currentSources")
+    public Map<String, String> getSourcePatterns() {
+        return sourceManager.getPatterns();
+    }
+
+    @PostMapping("/insert")
+    public void insertURL(@RequestBody MangaRequest req) {
+        sct.watchSingle(req.url, req.id);
     }
 
     @ExceptionHandler(NoSuchMangaException.class)
